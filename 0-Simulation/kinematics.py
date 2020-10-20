@@ -211,11 +211,14 @@ def trianglePoints(x, z, h, w):
     None
 
 
+"""
 def triangle(x, z, h, w, t):
-    """
-    Takes the geometric parameters of the triangle and the current time, gives the joint angles to draw the triangle with the tip of th leg. Format : [theta1, theta2, theta3]
-    """
-    None
+    segment(x, -w/2, z, x, w/2, z, t, 3)
+    segment(x, -w/2, z, x, 0, z+h, t, 3)
+    segment(x, 0, z+h, x, w/2, z, t, 3)
+    alphas = 
+    return(alphas)
+"""
 
 
 def circlePoints(x, z, r, N=16):
@@ -225,18 +228,11 @@ def circlePoints(x, z, r, N=16):
     None
 
 
-"""Autre façon de faire le cercle (à présenter)
-            # y_circle = r * math.cos(2 * math.pi * (1 / duration) * sim.t)
-            # z_circle = r * math.sin(2 * math.pi * (1 / duration) * sim.t)
-            # alphas = kinematics.computeIK(x, y_circle, z_circle + z)
-"""
-
-
 def circle(x, z, r, t, duration):
-    """
-    Takes the geometric parameters of the circle and the current time, gives the joint angles to draw the circle with the tip of th leg. Format : [theta1, theta2, theta3]
-    """
-    None
+    y_circle = r * math.cos(2 * math.pi * (1 / duration) * t)
+    z_circle =+ r * math.sin(2 * math.pi * (1 / duration) * t)
+    alphas = computeIK(x, y_circle, z_circle + z)
+    return(alphas)
 
 def segment(segment_x1, segment_y1, segment_z1, 
     segment_x2, segment_y2, segment_z2, t, duration):
@@ -249,9 +245,6 @@ def segment(segment_x1, segment_y1, segment_z1,
     theta1, theta2, theta3 = computeIK(x,y,z)
 
     return (theta1, theta2, theta3)
-
-def segment2:
-    None
     
 
 
