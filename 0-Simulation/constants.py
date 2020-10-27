@@ -79,12 +79,12 @@ elif ROBOT_TYPE == PHANTOMX_SIMULATION:
     USE_MM_OUTPUT = False
     Z_DIRECTION = 1
     LEG_ANGLES = [
-        -math.pi / 4,
         math.pi / 4,
-        math.pi / 2,
-        3 * math.pi / 4,
-        -3 * math.pi / 4,
+        -math.pi / 4,
         -math.pi / 2,
+        -3 * math.pi / 4,
+        3 * math.pi / 4,
+        math.pi / 2,
     ]
     LEG_CENTER_POS = [
         (0.1248, -0.06164, 0.001116),
