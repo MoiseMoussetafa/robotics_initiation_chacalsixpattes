@@ -356,6 +356,7 @@ def segment_oneway(segment_x1, segment_y1, segment_z1, segment_x2, segment_y2, s
 
     return (theta1, theta2, theta3)
 
+
 def main():
     print(
         "0, -90, -90 --> ", computeDK(0, -90, -90, l1=constL1, l2=constL2, l3=constL3)

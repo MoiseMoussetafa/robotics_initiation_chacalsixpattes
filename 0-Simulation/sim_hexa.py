@@ -7,6 +7,7 @@ import argparse
 import pybullet as p
 from onshape_to_robot.simulation import Simulation
 import kinematics
+import movements
 
 # from squaternion import Quaternion
 from scipy.spatial.transform import Rotation
