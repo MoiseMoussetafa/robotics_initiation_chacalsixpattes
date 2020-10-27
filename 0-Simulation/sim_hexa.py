@@ -70,20 +70,25 @@ while True:
         for name in controls.keys():
             targets[name] = p.readUserDebugParameter(controls[name])
         points = kinematics.computeDKDetailed(
-            targets["j_c1_rf"], targets["j_thigh_rf"], targets["j_tibia_rf"]
+            targets["j_c1_rf"],
+            targets["j_thigh_rf"],
+            targets["j_tibia_rf"],
+            use_rads=True,
         )
         i = -1
-        for T in points:
+        T = []
+        for pt in points:
             # Drawing each step of the DK calculation
             i += 1
-            T = kinematics.rotaton_2D(T[0], T[1], T[2], leg_angle)
-            T[0] += leg_center_pos[0]
-            T[1] += leg_center_pos[1]
-            T[2] += leg_center_pos[2]
+            T.append(kinematics.rotaton_2D(pt[0], pt[1], pt[2], leg_angle))
+            T[-1][0] += leg_center_pos[0]
+            T[-1][1] += leg_center_pos[1]
+            T[-1][2] += leg_center_pos[2]
             # print("Drawing cross {} at {}".format(i, T))
             p.resetBasePositionAndOrientation(
-                crosses[i], T, to_pybullet_quaternion(0, 0, leg_angle)
+                crosses[i], T[-1], to_pybullet_quaternion(0, 0, leg_angle)
             )
+
         # Temp
         sim.setRobotPose([0, 0, 0.5], to_pybullet_quaternion(0, 0, 0))
         # sim.setRobotPose(
@@ -98,15 +103,9 @@ while True:
         x = p.readUserDebugParameter(controls["target_x"])
         y = p.readUserDebugParameter(controls["target_y"])
         z = p.readUserDebugParameter(controls["target_z"])
-        alphas = kinematics.computeIK(x, y, z, verbose=True)
+        alphas = kinematics.computeIK(x, y, z, verbose=True, use_rads=True)
 
-        # print(
-        #     "Asked IK for x:{}, y:{}, z{}, got theta1:{}, theta2:{}, theta3:{}".format(
-        #         x, y, z, alphas[0], alphas[1], alphas[2]
-        #     )
-        # )
         dk0 = kinematics.computeDK(0, 0, 0, use_rads=True)
-        print("dk0 = {}".format(dk0))
         targets["j_c1_rf"] = alphas[0]
         targets["j_thigh_rf"] = alphas[1]
         targets["j_tibia_rf"] = alphas[2]
@@ -114,6 +113,7 @@ while True:
         state = sim.setJoints(targets)
         # Temp
         sim.setRobotPose([0, 0, 0.5], [0, 0, 0, 1])
+
 
         T = kinematics.rotaton_2D(x, y, z, leg_angle)
         T[0] += leg_center_pos[0]
