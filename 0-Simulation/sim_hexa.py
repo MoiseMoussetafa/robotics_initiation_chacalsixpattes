@@ -7,10 +7,34 @@ import argparse
 import pybullet as p
 from onshape_to_robot.simulation import Simulation
 import kinematics
-import movements
+from constants import *
 
 # from squaternion import Quaternion
 from scipy.spatial.transform import Rotation
+
+class Parameters:
+    def __init__(
+        self, z=-0.06,
+    ):
+        self.z = z
+        # Angle between the X axis of the leg and the X axis of the robot for each leg
+        self.legAngles = LEG_ANGLES
+        self.initLeg = []   # INIT LEG POSITIONS
+        self.initLeg.append([0.170, 0])
+        self.initLeg.append([0.170, 0])
+        self.initLeg.append([0.170, 0])
+        self.initLeg.append([0.170, 0])
+        self.initLeg.append([0.170, 0])
+        self.initLeg.append([0.170, 0])
+
+        # Motor re-united by joint name for the simulation
+        self.legs = {}
+        self.legs[1] = ["j_c1_rf", "j_thigh_rf", "j_tibia_rf"]
+        self.legs[6] = ["j_c1_rm", "j_thigh_rm", "j_tibia_rm"]
+        self.legs[5] = ["j_c1_rr", "j_thigh_rr", "j_tibia_rr"]
+        self.legs[2] = ["j_c1_lf", "j_thigh_lf", "j_tibia_lf"]
+        self.legs[3] = ["j_c1_lm", "j_thigh_lm", "j_tibia_lm"]
+        self.legs[4] = ["j_c1_lr", "j_thigh_lr", "j_tibia_lr"]
 
 
 def to_pybullet_quaternion(roll, pitch, yaw, degrees=False):
@@ -26,6 +50,15 @@ def to_pybullet_quaternion(roll, pitch, yaw, degrees=False):
     return rot_quat
 
 
+# Updates the values of the dictionnary targets to set 3 angles to given leg
+def set_leg_angles(alphas, leg_id, targets, params):
+    leg = params.legs[leg_id]
+    i = -1
+    for name in leg:
+        i += 1
+        targets[name] = alphas[i]
+
+
 # m_friction
 parser = argparse.ArgumentParser()
 parser.add_argument("--mode", "-m", type=str, default="direct", help="test")
@@ -39,6 +72,7 @@ sim.setRobotPose([0, 0, 0.5], [0, 0, 0, 1])
 
 leg_center_pos = [0.1248, -0.06164, 0.001116 + 0.5]
 leg_angle = -math.pi / 4
+params = Parameters ()
 
 
 if args.mode == "frozen-direct":
@@ -124,6 +158,14 @@ while True:
         p.resetBasePositionAndOrientation(
             cross, T, to_pybullet_quaternion(0, 0, leg_angle)
         )
-
+    elif args.mode == "robot-ik":
+        for leg_id in range(1,7):
+            # To create movement : A * math.sin(2 * math.pi * 0.5 * time.time())
+            # with A as amplitude (like 0.03m)
+            alphas = kinematics.computeIKOriented(
+                    0,
+                    0.02 * math.sin(2 * math.pi * 0.5 * time.time()),
+                    0, leg_id, params)
+            set_leg_angles(alphas, leg_id, targets, params)
+        state = sim.setJoints(targets)
     sim.tick()
-
