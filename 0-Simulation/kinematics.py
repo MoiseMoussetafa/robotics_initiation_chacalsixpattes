@@ -207,7 +207,6 @@ def computeIKNotOriented(x, y, z, legID, params, verbose=False):
 
 def rotaton_2D(x, y, z, theta):
     # Applying a rotation around the Z axis
-    # TODO
     new_x = math.cos(theta) * x - math.sin(theta) * y
     new_y = math.sin(theta) * x + math.cos(theta) * y
     return [new_x, new_y, z]
