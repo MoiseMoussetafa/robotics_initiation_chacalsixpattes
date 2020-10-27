@@ -194,7 +194,14 @@ def computeIK(
 # Given the destination point (x, y, z) of a limb with 3 rotational axes separated by the distances (l1, l2, l3),
 # returns the angles to apply to the 3 axes
 def computeIKOriented(x, y, z, legID, params, extra_theta=0, verbose=False):
-    None
+    ROTATON = rotaton_2D(
+        x,
+        y,
+        z, 
+        LEG_ANGLES[legID-1])
+
+    alphas = computeIK(ROTATON[0] + params.initLeg[legID-1][0], ROTATON[1] + params.initLeg[legID-1][1], ROTATON[2] + params.z)
+    return alphas
 
 
 # Computes the inverse kinematics of a leg in a frame colinear to the leg's frame (x points in front of the leg, y points to its left, z towards the sky)
