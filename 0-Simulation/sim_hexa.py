@@ -14,7 +14,7 @@ from scipy.spatial.transform import Rotation
 
 class Parameters:
     def __init__(
-        self, z=-0.06,
+        self, z=-0.1,
     ):
         self.z = z
         # Angle between the X axis of the leg and the X axis of the robot for each leg
@@ -163,9 +163,10 @@ while True:
             # To create movement : A * math.sin(2 * math.pi * 0.5 * time.time())
             # with A as amplitude (like 0.03m)
             alphas = kinematics.computeIKOriented(
-                    0,
-                    0.02 * math.sin(2 * math.pi * 0.5 * time.time()),
-                    0, leg_id, params)
+                    0 * math.sin(2 * math.pi * 0.5 * time.time()),
+                    0 * math.sin(2 * math.pi * 0.5 * time.time()),
+                    0 * math.sin(2 * math.pi * 0.5 * time.time()),
+                    leg_id, params)
             set_leg_angles(alphas, leg_id, targets, params)
         state = sim.setJoints(targets)
     sim.tick()
