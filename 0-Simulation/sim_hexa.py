@@ -95,6 +95,11 @@ elif args.mode == "inverse":
     controls["target_y"] = p.addUserDebugParameter("target_y", -0.4, 0.4, alphas[1])
     controls["target_z"] = p.addUserDebugParameter("target_z", -0.4, 0.4, alphas[2])
 
+elif args.mode == "robot-ik":
+    controls["target_x"] = p.addUserDebugParameter("target_x", 0, 0.1)
+    controls["target_y"] = p.addUserDebugParameter("target_y", 0, 0.1)
+    controls["target_z"] = p.addUserDebugParameter("target_z", 0, 0.1)    
+
 
 while True:
     targets = {}
@@ -159,13 +164,16 @@ while True:
             cross, T, to_pybullet_quaternion(0, 0, leg_angle)
         )
     elif args.mode == "robot-ik":
+        x = p.readUserDebugParameter(controls["target_x"])
+        y = p.readUserDebugParameter(controls["target_y"])
+        z = p.readUserDebugParameter(controls["target_z"])
         for leg_id in range(1,7):
             # To create movement : A * math.sin(2 * math.pi * 0.5 * time.time())
             # with A as amplitude (like 0.03m)
             alphas = kinematics.computeIKOriented(
-                    0 * math.sin(2 * math.pi * 0.5 * time.time()),
-                    0 * math.sin(2 * math.pi * 0.5 * time.time()),
-                    0 * math.sin(2 * math.pi * 0.5 * time.time()),
+                    x * math.sin(2 * math.pi * 0.5 * time.time()),
+                    y * math.sin(2 * math.pi * 0.5 * time.time()),
+                    z * math.sin(2 * math.pi * 0.5 * time.time()),
                     leg_id, params)
             set_leg_angles(alphas, leg_id, targets, params)
         state = sim.setJoints(targets)
