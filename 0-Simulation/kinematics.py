@@ -200,7 +200,10 @@ def computeIKOriented(x, y, z, legID, params, extra_theta=0, verbose=False):
         z, 
         LEG_ANGLES[legID-1])
 
-    alphas = computeIK(ROTATON[0] + params.initLeg[legID-1][0], ROTATON[1] + params.initLeg[legID-1][1], ROTATON[2] + params.z)
+    alphas = computeIK(
+        ROTATON[0] + params.initLeg[legID-1][0], 
+        ROTATON[1] + params.initLeg[legID-1][1], 
+        ROTATON[2] + params.z)
     return alphas
 
 
