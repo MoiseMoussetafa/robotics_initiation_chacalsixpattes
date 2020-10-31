@@ -101,6 +101,26 @@ elif args.mode == "robot-ik":
     controls["target_y"] = p.addUserDebugParameter("target_y", -0.1, 0.1)
     controls["target_z"] = p.addUserDebugParameter("target_z", -0.1, 0.1)    
 
+elif args.mode == "inverse-all":
+    alphas = kinematics.computeDK(0, 0, 0, use_rads=True)
+    controls["target_x1"] = p.addUserDebugParameter("target_x1", -0.4, 0.4, alphas[0])
+    controls["target_y1"] = p.addUserDebugParameter("target_y1", -0.4, 0.4, alphas[1])
+    controls["target_z1"] = p.addUserDebugParameter("target_z1", -0.4, 0.4, alphas[2])
+    controls["target_x2"] = p.addUserDebugParameter("target_x2", -0.4, 0.4, alphas[0])
+    controls["target_y2"] = p.addUserDebugParameter("target_y2", -0.4, 0.4, alphas[1])
+    controls["target_z2"] = p.addUserDebugParameter("target_z2", -0.4, 0.4, alphas[2])
+    controls["target_x3"] = p.addUserDebugParameter("target_x3", -0.4, 0.4, alphas[0])
+    controls["target_y3"] = p.addUserDebugParameter("target_y3", -0.4, 0.4, alphas[1])
+    controls["target_z3"] = p.addUserDebugParameter("target_z3", -0.4, 0.4, alphas[2])
+    controls["target_x4"] = p.addUserDebugParameter("target_x4", -0.4, 0.4, alphas[0])
+    controls["target_y4"] = p.addUserDebugParameter("target_y4", -0.4, 0.4, alphas[1])
+    controls["target_z4"] = p.addUserDebugParameter("target_z4", -0.4, 0.4, alphas[2])
+    controls["target_x5"] = p.addUserDebugParameter("target_x5", -0.4, 0.4, alphas[0])
+    controls["target_y5"] = p.addUserDebugParameter("target_y5", -0.4, 0.4, alphas[1])
+    controls["target_z5"] = p.addUserDebugParameter("target_z5", -0.4, 0.4, alphas[2])
+    controls["target_x6"] = p.addUserDebugParameter("target_x6", -0.4, 0.4, alphas[0])
+    controls["target_y6"] = p.addUserDebugParameter("target_y6", -0.4, 0.4, alphas[1])
+    controls["target_z6"] = p.addUserDebugParameter("target_z6", -0.4, 0.4, alphas[2])
 
 while True:
     targets = {}
@@ -150,7 +170,6 @@ while True:
         targets["j_c1_rf"] = alphas[0]
         targets["j_thigh_rf"] = alphas[1]
         targets["j_tibia_rf"] = alphas[2]
-
         state = sim.setJoints(targets)
         # Temp
         sim.setRobotPose([0, 0, 0.5], [0, 0, 0, 1])
@@ -178,4 +197,75 @@ while True:
                     leg_id, params)
             set_leg_angles(alphas, leg_id, targets, params)
         state = sim.setJoints(targets)
+    
+    elif args.mode == "inverse-all":
+        x = p.readUserDebugParameter(controls["target_x1"])
+        y = p.readUserDebugParameter(controls["target_y1"])
+        z = p.readUserDebugParameter(controls["target_z1"])
+        alphas = kinematics.computeIK(x, y, z, verbose=True, use_rads=True)
+
+        dk1 = kinematics.computeDK(0, 0, 0, use_rads=True)
+        targets["j_c1_rf"] = alphas[0]
+        targets["j_thigh_rf"] = alphas[1]
+        targets["j_tibia_rf"] = alphas[2]
+        state = sim.setJoints(targets)
+
+        x = p.readUserDebugParameter(controls["target_x2"])
+        y = p.readUserDebugParameter(controls["target_y2"])
+        z = p.readUserDebugParameter(controls["target_z2"])
+        alphas = kinematics.computeIK(x, y, z, verbose=True, use_rads=True)
+
+        dk2 = kinematics.computeDK(0, 0, 0, use_rads=True)
+        targets["j_c1_lf"] = alphas[0]
+        targets["j_thigh_lf"] = alphas[1]
+        targets["j_tibia_lf"] = alphas[2]
+        state = sim.setJoints(targets)
+
+        x = p.readUserDebugParameter(controls["target_x3"])
+        y = p.readUserDebugParameter(controls["target_y3"])
+        z = p.readUserDebugParameter(controls["target_z3"])
+        alphas = kinematics.computeIK(x, y, z, verbose=True, use_rads=True)
+
+        dk3 = kinematics.computeDK(0, 0, 0, use_rads=True)
+        targets["j_c1_lm"] = alphas[0]
+        targets["j_thigh_lm"] = alphas[1]
+        targets["j_tibia_lm"] = alphas[2]
+        state = sim.setJoints(targets)
+
+        x = p.readUserDebugParameter(controls["target_x4"])
+        y = p.readUserDebugParameter(controls["target_y4"])
+        z = p.readUserDebugParameter(controls["target_z4"])
+        alphas = kinematics.computeIK(x, y, z, verbose=True, use_rads=True)
+
+        dk4 = kinematics.computeDK(0, 0, 0, use_rads=True)
+        targets["j_c1_lr"] = alphas[0]
+        targets["j_thigh_lr"] = alphas[1]
+        targets["j_tibia_lr"] = alphas[2]
+        state = sim.setJoints(targets)
+
+        x = p.readUserDebugParameter(controls["target_x5"])
+        y = p.readUserDebugParameter(controls["target_y5"])
+        z = p.readUserDebugParameter(controls["target_z5"])
+        alphas = kinematics.computeIK(x, y, z, verbose=True, use_rads=True)
+
+        dk5 = kinematics.computeDK(0, 0, 0, use_rads=True)
+        targets["j_c1_rr"] = alphas[0]
+        targets["j_thigh_rr"] = alphas[1]
+        targets["j_tibia_rr"] = alphas[2]
+        state = sim.setJoints(targets)
+
+        x = p.readUserDebugParameter(controls["target_x6"])
+        y = p.readUserDebugParameter(controls["target_y6"])
+        z = p.readUserDebugParameter(controls["target_z6"])
+        alphas = kinematics.computeIK(x, y, z, verbose=True, use_rads=True)
+
+        dk6 = kinematics.computeDK(0, 0, 0, use_rads=True)
+        targets["j_c1_rm"] = alphas[0]
+        targets["j_thigh_rm"] = alphas[1]
+        targets["j_tibia_rm"] = alphas[2]
+        state = sim.setJoints(targets)
+
+        # Surelevation robot pose
+        sim.setRobotPose([0, 0, 0.5], [0, 0, 0, 1])
+
     sim.tick()
