@@ -256,6 +256,15 @@ def trianglePoints(x, z, h, w):
     """
     Takes the geometric parameters of the triangle and returns the position of the 3 points of the triagles. Format : [[x1, y1, z1], [x2, y2, z2], [x3, y3, z3]]
     """
+    P1 = [x, 0, z+h]
+    P2 = [x, w/2, z]
+    P3 = [x, -w/2, z]
+    return [P1, P2, P3]
+
+def trianglePoints2(x, z, h, w):
+    """
+    Takes the geometric parameters of the triangle and returns the position of the 3 points of the triagles. Format : [[x1, y1, z1], [x2, y2, z2], [x3, y3, z3]]
+    """
     P1 = [0, x, z+h]
     P2 = [w/2, x, z]
     P3 = [-w/2, x, z]
@@ -270,12 +279,12 @@ def segdist(P1, P2):
     return seg
 
 
-def triangle_w(x, z, h, w, t, period, leg_id, params):
+def triangle_w(x, z, h, w, t, period, leg_id, params, extra_theta):
     """
     Takes the geometric parameters of the triangle and the current time, gives the joint angles to draw the triangle with the tip of th leg. Format : [theta1, theta2, theta3]
     """
     alphas = [0,0,0]
-    points = trianglePoints(x,z,h,w)
+    points = trianglePoints2(x,z,h,w)
     d1 = segdist(points[0],points[1])
     d2 = segdist(points[1],points[2])
     d3 = segdist(points[2],points[0])
@@ -285,13 +294,13 @@ def triangle_w(x, z, h, w, t, period, leg_id, params):
     t = math.fmod(t,period)
 
     if (t <= period1):
-        alphas = segment_oneway_w(points[0][0], points[0][1], points[0][2], points[1][0], points[1][1], points[1][2], t, period1, leg_id, params)
+        alphas = segment_oneway_w(points[0][0], points[0][1], points[0][2], points[1][0], points[1][1], points[1][2], t, period1, leg_id, params, extra_theta)
 
     elif (t <= (period1+period2)):
-        alphas = segment_oneway_w(points[1][0], points[1][1], points[1][2], points[2][0], points[2][1], points[2][2], t - period1, period2, leg_id, params)
+        alphas = segment_oneway_w(points[1][0], points[1][1], points[1][2], points[2][0], points[2][1], points[2][2], t - period1, period2, leg_id, params, extra_theta)
 
     else :
-        alphas = segment_oneway_w(points[2][0], points[2][1], points[2][2], points[0][0], points[0][1], points[0][2], t - period1 - period2, period3, leg_id, params)
+        alphas = segment_oneway_w(points[2][0], points[2][1], points[2][2], points[0][0], points[0][1], points[0][2], t - period1 - period2, period3, leg_id, params, extra_theta)
     
     return alphas
 
@@ -412,7 +421,7 @@ def segment_oneway(segment_x1, segment_y1, segment_z1, segment_x2, segment_y2, s
     return (theta1, theta2, theta3)
 
 
-def segment_oneway_w(segment_x1, segment_y1, segment_z1, segment_x2, segment_y2, segment_z2, t, duration, leg_id, params):
+def segment_oneway_w(segment_x1, segment_y1, segment_z1, segment_x2, segment_y2, segment_z2, t, duration, leg_id, params, extra_theta):
     """
     Used for triangle, segment in only one direction
     """
@@ -422,7 +431,7 @@ def segment_oneway_w(segment_x1, segment_y1, segment_z1, segment_x2, segment_y2,
     y = (nt/duration) * (segment_y2-segment_y1) + segment_y1
     z = (nt/duration) * (segment_z2-segment_z1) + segment_z1
 
-    theta1, theta2, theta3 = computeIKOriented(x,y,z, leg_id, params)
+    theta1, theta2, theta3 = computeIKOriented(x,y,z, leg_id, params, extra_theta)
 
     return (theta1, theta2, theta3)
 
