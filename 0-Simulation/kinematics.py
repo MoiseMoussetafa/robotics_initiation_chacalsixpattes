@@ -197,8 +197,8 @@ def computeIKOriented(x, y, z, legID, params, extra_theta=0, verbose=False):
     ROTATON = rotaton_2D(
         x,
         y,
-        z, 
-        LEG_ANGLES[legID-1])
+        z,
+        LEG_ANGLES[legID-1] + extra_theta)
 
     alphas = computeIK(
         ROTATON[0] + params.initLeg[legID-1][0], 
@@ -256,9 +256,9 @@ def trianglePoints(x, z, h, w):
     """
     Takes the geometric parameters of the triangle and returns the position of the 3 points of the triagles. Format : [[x1, y1, z1], [x2, y2, z2], [x3, y3, z3]]
     """
-    P1 = [x, 0, z+h]
-    P2 = [x, w/2, z]
-    P3 = [x, -w/2, z]
+    P1 = [0, x, z+h]
+    P2 = [w/2, x, z]
+    P3 = [-w/2, x, z]
     return [P1, P2, P3]
 
 
@@ -268,6 +268,57 @@ def segdist(P1, P2):
     """
     seg = math.sqrt(math.pow(P2[0]-P1[0],2) + math.pow(P2[1]-P1[1],2) + math.pow(P2[2]-P1[2],2))
     return seg
+
+
+def triangle_w(x, z, h, w, t, period, leg_id, params):
+    """
+    Takes the geometric parameters of the triangle and the current time, gives the joint angles to draw the triangle with the tip of th leg. Format : [theta1, theta2, theta3]
+    """
+    alphas = [0,0,0]
+    points = trianglePoints(x,z,h,w)
+    d1 = segdist(points[0],points[1])
+    d2 = segdist(points[1],points[2])
+    d3 = segdist(points[2],points[0])
+    period1 = (d1/(d1+d2+d3)) * period
+    period2 = (d2/(d1+d2+d3)) * period
+    period3 = (d3/(d1+d2+d3)) * period
+    t = math.fmod(t,period)
+
+    if (t <= period1):
+        alphas = segment_oneway_w(points[0][0], points[0][1], points[0][2], points[1][0], points[1][1], points[1][2], t, period1, leg_id, params)
+
+    elif (t <= (period1+period2)):
+        alphas = segment_oneway_w(points[1][0], points[1][1], points[1][2], points[2][0], points[2][1], points[2][2], t - period1, period2, leg_id, params)
+
+    else :
+        alphas = segment_oneway_w(points[2][0], points[2][1], points[2][2], points[0][0], points[0][1], points[0][2], t - period1 - period2, period3, leg_id, params)
+    
+    return alphas
+
+
+def triangle_for_rotation(x, z, h, w, t, period=5):
+    """
+    Takes the geometric parameters of the triangle and the current time, gives the joint angles to draw the triangle with the tip of th leg. Format : [theta1, theta2, theta3]
+    """
+    points = trianglePoints(x,z,h,w)
+    d1 = segdist(points[0],points[1])
+    d2 = segdist(points[1],points[2])
+    d3 = segdist(points[2],points[0])
+    period1 = (d1/(d1+d2+d3)) * period
+    period2 = (d2/(d1+d2+d3)) * period
+    period3 = (d3/(d1+d2+d3)) * period
+    t = math.fmod(t,period)
+
+    if (t <= period1):
+        alphas = segment_oneway(points[0][0], points[0][1], points[0][2], points[1][0], points[1][1], points[1][2], t, period1)
+
+    elif (t <= (period1+period2)):
+        alphas = segment_oneway(points[1][0], points[1][1], points[1][2], points[2][0], points[2][1], points[2][2], t - period1, period2)
+
+    else :
+        alphas = segment_oneway(points[2][0], points[2][1], points[2][2], points[0][0], points[0][1], points[0][2], t - period1 - period2, period3)
+    
+    return alphas
 
 
 def triangle(x, z, h, w, t, period=5):
@@ -301,12 +352,6 @@ def circlePoints(x, z, r, N=16):
     """
     None
 
-
-"""Autre façon de faire le cercle (à présenter)
-            # y_circle = r * math.cos(2 * math.pi * (1 / duration) * sim.t)
-            # z_circle = r * math.sin(2 * math.pi * (1 / duration) * sim.t)
-            # alphas = kinematics.computeIK(x, y_circle, z_circle + z)
-"""
 
 
 def circle(x, z, r, t, duration):
@@ -366,6 +411,20 @@ def segment_oneway(segment_x1, segment_y1, segment_z1, segment_x2, segment_y2, s
 
     return (theta1, theta2, theta3)
 
+
+def segment_oneway_w(segment_x1, segment_y1, segment_z1, segment_x2, segment_y2, segment_z2, t, duration, leg_id, params):
+    """
+    Used for triangle, segment in only one direction
+    """
+    nt = math.fmod(t,duration)
+        
+    x = (nt/duration) * (segment_x2-segment_x1) + segment_x1
+    y = (nt/duration) * (segment_y2-segment_y1) + segment_y1
+    z = (nt/duration) * (segment_z2-segment_z1) + segment_z1
+
+    theta1, theta2, theta3 = computeIKOriented(x,y,z, leg_id, params)
+
+    return (theta1, theta2, theta3)
 
 def main():
     print(
