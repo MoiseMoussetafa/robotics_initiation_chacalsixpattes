@@ -116,11 +116,11 @@ elif args.mode == "robot-ik":
     controls["target_z"] = p.addUserDebugParameter("target_z", -0.1, 0.1)    
 
 elif args.mode == "rotation":
-    controls["target_x"] = p.addUserDebugParameter("target_x", 0, 0.3, 0.15)    
-    controls["target_z"] = p.addUserDebugParameter("target_z", -1, 0.5, -0.3)    
-    controls["target_h"] = p.addUserDebugParameter("target_h", 0.1, 0.5, 0.2)
-    controls["target_w"] = p.addUserDebugParameter("target_w", 0, 2, 0.2)    
-    controls["period"] = p.addUserDebugParameter("period", 0.1, 10, 3)
+    controls["target_x"] = p.addUserDebugParameter("target_x", 0, 0.3, 0.180)    
+    controls["target_z"] = p.addUserDebugParameter("target_z", -1, 0.5, -0.15)    
+    controls["target_h"] = p.addUserDebugParameter("target_h", -0.2, 0.2, 0.001)
+    controls["target_w"] = p.addUserDebugParameter("target_w", -0.3, 0.3, 0.1)    
+    controls["period"] = p.addUserDebugParameter("period", 0.1, 10, 1)
 
 elif args.mode == "walk":
     controls["x"] = p.addUserDebugParameter("x", -0.1, 0.1, 0)                              # x
