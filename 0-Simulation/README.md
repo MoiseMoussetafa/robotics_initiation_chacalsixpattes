@@ -13,16 +13,34 @@ pip install numpy pygame pybullet onshape-to-robot transforms3d scipy
 There are several simulation files but generaly ```python sim_hexa.py --help``` gives some info on how to use them.
 Make sure your file ```kinematics.py``` is in this folder.
 ```bash
-python sim2.py --mode direct
+python3 sim2.py --mode direct
 ```
 ```bash
-python sim2.py --mode inverse
+python3 sim2.py --mode inverse
 ```
 ```bash
-python sim2.py --mode circle
+python3 sim2.py --mode circle
 ```
 ```bash
-python sim2.py --mode triangle
+python3 sim2.py --mode triangle
+```
+```bash
+python3 sim_hexa -m ultrawalk
+```
+```bash
+python3 sim_hexa -m walk
+```
+```bash
+python3 sim_hexa -m rotation
+```
+```bash
+python3 sim_hexa -m inverse-all
+```
+```bash
+python3 sim_hexa -m inverse
+```
+```bash
+python3 sim_hexa -m triangle
 ```
 
 # Videos
