@@ -6,11 +6,11 @@ A simple simulation based on PyBullet.
 # Requirements
 Tested on Python 3.6 but should work on any recent version of Python:
 ```bash
-pip install numpy pygame pybullet onshape-to-robot transforms3d scipy
+pip3 install numpy pygame pybullet onshape-to-robot transforms3d scipy
 ```
 
 # Usage
-There are several simulation files but generaly ```python sim_hexa.py --help``` gives some info on how to use them.
+There are several simulation files but generaly ```python3 sim_hexa.py --help``` gives some info on how to use them.
 Make sure your file ```kinematics.py``` is in this folder.
 ```bash
 python3 sim2.py --mode direct
@@ -40,7 +40,7 @@ python3 sim_hexa -m inverse-all
 python3 sim_hexa -m inverse
 ```
 ```bash
-python3 sim_hexa -m triangle
+python3 sim_hexa -m robot-ik
 ```
 
 # Videos
