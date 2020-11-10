@@ -211,8 +211,12 @@ def computeIKOriented(x, y, z, legID, params, extra_theta=0, verbose=False):
 # but whose (0,0) point matches the leg's initial position.
 # Given the destination point (x, y, z) of a limb with 3 rotational axes separated by the distances (l1, l2, l3),
 # returns the angles to apply to the 3 axes
-def computeIKNotOriented(x, y, z, legID, params, verbose=False):
-    None
+def computeIKNotOriented(x, y, z, legID, params, extra_theta=0, verbose=False):
+    alphas = computeIK(
+        params.initLeg[legID-1][0], 
+        params.initLeg[legID-1][1], 
+        params.z)
+    return alphas
 
 
 def rotaton_2D(x, y, z, theta):
@@ -361,8 +365,6 @@ def circlePoints(x, z, r, N=16):
     """
     None
 
-
-
 def circle(x, z, r, t, duration):
     """
     Takes the geometric parameters of the circle and the current time, gives the joint angles to draw the circle with the tip of th leg. Format : [theta1, theta2, theta3]
@@ -370,6 +372,19 @@ def circle(x, z, r, t, duration):
     y_circle = r * math.cos(2 * math.pi * (1 / duration) * t)
     z_circle =+ r * math.sin(2 * math.pi * (1 / duration) * t)
     alphas = computeIK(x, y_circle, z_circle + z)
+    return alphas
+
+def demicircle(x, y, z, r, t, duration, legID, params, extra_theta):
+    y_circle = r * math.cos(2 * math.pi * (1 / duration) * t)
+    z_circle =+ r * math.sin(2 * math.pi * (1 / duration) * t)
+    p1 = [x, y_circle + r, z]
+    p2 = [x, y_circle - r, z]
+    if z_circle < 0 :
+        alphas = segment_oneway(p1[0], p1[1], p1[2], 
+            p2[0], p2[1], p2[2], 
+            t, duration)
+    else :
+        alphas = computeIKOriented(x, y_circle, z_circle + z, legID, params, extra_theta)
     return alphas
 
 def segment(segment_x1, segment_y1, segment_z1,
