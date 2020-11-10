@@ -212,11 +212,7 @@ def computeIKOriented(x, y, z, legID, params, extra_theta=0, verbose=False):
 # Given the destination point (x, y, z) of a limb with 3 rotational axes separated by the distances (l1, l2, l3),
 # returns the angles to apply to the 3 axes
 def computeIKNotOriented(x, y, z, legID, params, extra_theta=0, verbose=False):
-    alphas = computeIK(
-        params.initLeg[legID-1][0], 
-        params.initLeg[legID-1][1], 
-        params.z)
-    return alphas
+    None
 
 
 def rotaton_2D(x, y, z, theta):
@@ -268,6 +264,7 @@ def trianglePoints(x, z, h, w):
 def trianglePoints2(x, z, h, w):
     """
     Takes the geometric parameters of the triangle and returns the position of the 3 points of the triagles. Format : [[x1, y1, z1], [x2, y2, z2], [x3, y3, z3]]
+    Specific used for walk
     """
     P1 = [0, x, z+h]
     P2 = [w/2, x, z]
@@ -285,7 +282,7 @@ def segdist(P1, P2):
 
 def triangle_w(x, z, h, w, t, period, leg_id, params, extra_theta):
     """
-    Takes the geometric parameters of the triangle and the current time, gives the joint angles to draw the triangle with the tip of th leg. Format : [theta1, theta2, theta3]
+    Triangle used for walk
     """
     alphas = [0,0,0]
     points = trianglePoints2(x,z,h,w)
@@ -311,7 +308,7 @@ def triangle_w(x, z, h, w, t, period, leg_id, params, extra_theta):
 
 def triangle_for_rotation(x, z, h, w, t, period=5):
     """
-    Takes the geometric parameters of the triangle and the current time, gives the joint angles to draw the triangle with the tip of th leg. Format : [theta1, theta2, theta3]
+    Triangle used for rotation
     """
     points = trianglePoints(x,z,h,w)
     d1 = segdist(points[0],points[1])
@@ -387,6 +384,7 @@ def demicircle(x, y, z, r, t, duration, legID, params, extra_theta):
         alphas = computeIKOriented(x, y_circle, z_circle + z, legID, params, extra_theta)
     return alphas
 
+
 def segment(segment_x1, segment_y1, segment_z1,
             segment_x2, segment_y2, segment_z2, t, duration):
     """
@@ -423,7 +421,7 @@ def segment_modulo(segment_x1, segment_y1, segment_z1, segment_x2, segment_y2, s
 
 def segment_oneway(segment_x1, segment_y1, segment_z1, segment_x2, segment_y2, segment_z2, t, duration):
     """
-    Used for triangle, segment in only one direction
+    Used for triangle in the rotation, segment in only one direction
     """
     nt = math.fmod(t,duration)
         
@@ -438,7 +436,7 @@ def segment_oneway(segment_x1, segment_y1, segment_z1, segment_x2, segment_y2, s
 
 def segment_oneway_w(segment_x1, segment_y1, segment_z1, segment_x2, segment_y2, segment_z2, t, duration, leg_id, params, extra_theta):
     """
-    Used for triangle, segment in only one direction
+    Used for triangle in the walk, segment in only one direction
     """
     nt = math.fmod(t,duration)
         

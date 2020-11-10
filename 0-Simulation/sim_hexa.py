@@ -80,8 +80,8 @@ sim = Simulation(robotPath, gui=True, panels=True, useUrdfInertia=False)
 # sim.setFloorFrictions(lateral=0, spinning=0, rolling=0)
 pos, rpy = sim.getRobotPose()
 sim.setRobotPose([0, 0, 0.5], [0, 0, 0, 1])
-
 yaw = 0
+posx = 0
 
 leg_center_pos = [0.1248, -0.06164, 0.001116 + 0.5]
 leg_angle = -math.pi / 4
@@ -99,11 +99,15 @@ if args.mode == "frozen-direct":
         print(name)
         if "c1" in name or "thigh" in name or "tibia" in name:
             controls[name] = p.addUserDebugParameter(name, -math.pi, math.pi, 0)
+
 elif args.mode == "direct":
     for name in sim.getJoints():
         print(name)
         if "c1" in name or "thigh" in name or "tibia" in name:
             controls[name] = p.addUserDebugParameter(name, -math.pi, math.pi, 0)
+
+# For next elif, last values : min, max, base value
+
 elif args.mode == "inverse":
     cross = p.loadURDF("target2/robot.urdf")
     alphas = kinematics.computeDK(0, 0, 0, use_rads=True)
@@ -112,7 +116,6 @@ elif args.mode == "inverse":
     controls["target_z"] = p.addUserDebugParameter("target_z", -0.4, 0.4, alphas[2])
 
 elif args.mode == "robot-ik":
-    # Two last values : min and max
     controls["target_x"] = p.addUserDebugParameter("target_x", -0.1, 0.1)
     controls["target_y"] = p.addUserDebugParameter("target_y", -0.1, 0.1)
     controls["target_z"] = p.addUserDebugParameter("target_z", -0.1, 0.1)    
@@ -125,22 +128,21 @@ elif args.mode == "rotation":
     controls["period"] = p.addUserDebugParameter("period", 0.1, 10, 1)
 
 elif args.mode == "walk":
-    controls["x"] = p.addUserDebugParameter("x", -0.1, 0.1, 0)                              # x
-    controls["height_hexapode"] = p.addUserDebugParameter("height_hexapode", -0.1, 0.1, 0)  # z
-    controls["height_arms"] = p.addUserDebugParameter("height_arms", 0, 0.2, 0.005)         # h
-    controls["amplitude"] = p.addUserDebugParameter("amplitude", 0.1, 0.5, 0.1)             # w
-    controls["speed"] = p.addUserDebugParameter("speed", 0.1, 10, 1)                        # period
-    controls["direction"] = p.addUserDebugParameter("direction", -math.pi, math.pi, 0)      # extra-theta
+    controls["x"] = p.addUserDebugParameter("x", -0.1, 0.1, 0)                                      # x
+    controls["height_hexapode"] = p.addUserDebugParameter("height_hexapode", -0.1, 0.1, 0)          # z
+    controls["height_arms"] = p.addUserDebugParameter("height_arms", 0, 0.2, 0.005)                 # h
+    controls["amplitude"] = p.addUserDebugParameter("amplitude", 0.1, 0.5, 0.1)                     # w
+    controls["speed"] = p.addUserDebugParameter("speed", 0.1, 10, 1)                                # period
+    controls["direction"] = p.addUserDebugParameter("direction", -math.pi, math.pi, 0)              # extra-theta
 
 elif args.mode == "ultrawalk":
-    controls["x"] = p.addUserDebugParameter("x", -0.1, 0.1, 0)                              # x
-    controls["height_hexapode"] = p.addUserDebugParameter("height_hexapode", -0.1, 0.1, -0.02)  # z
-    controls["height_arms"] = p.addUserDebugParameter("height_arms", 0, 0.2, 0.03)         # h
-    controls["amplitude"] = p.addUserDebugParameter("amplitude", 0.1, 0.5, 0.1)             # w
-    controls["speed"] = p.addUserDebugParameter("speed", 0.1, 10, 1)                        # period
-    controls["direction"] = p.addUserDebugParameter("direction", -math.pi, math.pi, 0)      # extra-theta
-    controls["target_w"] = p.addUserDebugParameter("target_w", -0.3, 0.3, 0)    
-
+    controls["x"] = p.addUserDebugParameter("x", -0.1, 0.1, 0)                                      # x
+    controls["height_hexapode"] = p.addUserDebugParameter("height_hexapode", -0.1, 0.1, -0.02)      # z
+    controls["height_arms"] = p.addUserDebugParameter("height_arms", 0, 0.2, 0.03)                  # h
+    controls["amplitude"] = p.addUserDebugParameter("amplitude", 0.1, 0.5, 0.1)                     # w
+    controls["speed"] = p.addUserDebugParameter("speed", 0.1, 10, 1)                                # period
+    controls["direction"] = p.addUserDebugParameter("direction", -math.pi, math.pi, 0)              # extra-theta
+    controls["target_w"] = p.addUserDebugParameter("target_w", -0.3, 0.3, 0)                        # w of rotation
 
 elif args.mode == "inverse-all":
     alphas = kinematics.computeDK(0, 0, 0, use_rads=True)
@@ -200,10 +202,12 @@ while True:
         #     leg_center_pos, to_pybullet_quaternion(0, 0, 0),
         # )
         state = sim.setJoints(targets)
+
     elif args.mode == "direct":
         for name in controls.keys():
             targets[name] = p.readUserDebugParameter(controls[name])
         state = sim.setJoints(targets)
+
     elif args.mode == "inverse":
         x = p.readUserDebugParameter(controls["target_x"])
         y = p.readUserDebugParameter(controls["target_y"])
@@ -218,7 +222,6 @@ while True:
         # Temp
         sim.setRobotPose([0, 0, 0.5], [0, 0, 0, 1])
 
-
         T = kinematics.rotaton_2D(x, y, z, leg_angle)
         T[0] += leg_center_pos[0]
         T[1] += leg_center_pos[1]
@@ -227,6 +230,7 @@ while True:
         p.resetBasePositionAndOrientation(
             cross, T, to_pybullet_quaternion(0, 0, leg_angle)
         )
+
     elif args.mode == "robot-ik":
         x = p.readUserDebugParameter(controls["target_x"])
         y = p.readUserDebugParameter(controls["target_y"])
@@ -234,11 +238,7 @@ while True:
         for leg_id in range(1,7):
             # To create movement : A * math.sin(2 * math.pi * 0.5 * time.time())
             # with A as amplitude (x, y, z, like 0.03m, or the parameters above)
-            alphas = kinematics.computeIKOriented(
-                    x,
-                    y,
-                    z,
-                    leg_id, params)
+            alphas = kinematics.computeIKOriented(x, y, z, leg_id, params)
             set_leg_angles(alphas, leg_id, targets, params)
         state = sim.setJoints(targets)
 
@@ -248,18 +248,13 @@ while True:
         h = p.readUserDebugParameter(controls["target_h"])
         w = p.readUserDebugParameter(controls["target_w"])
         period = p.readUserDebugParameter(controls["period"])
-
         for leg_id in range (1,7):
             if (leg_id == 1) or (leg_id == 3) or (leg_id == 5) :
-                alphas = kinematics.triangle_for_rotation(x, z, h, w, 
-                    sim.t, period)
-
+                alphas = kinematics.triangle_for_rotation(x, z, h, w, sim.t, period)
                 set_leg_angles(alphas, leg_id, targets, params)
 
             elif (leg_id == 2) or (leg_id == 4) or (leg_id == 6):
-                alphas = kinematics.triangle_for_rotation(x, z, h, w, 
-                    sim.t + 0.5 * period, period)
-
+                alphas = kinematics.triangle_for_rotation(x, z, h, w, sim.t + 0.5 * period, period)
                 set_leg_angles(alphas, leg_id, targets, params)
             
         state = sim.setJoints(targets)
@@ -272,24 +267,16 @@ while True:
         w = p.readUserDebugParameter(controls["amplitude"])
         period = p.readUserDebugParameter(controls["speed"])
         direction = p.readUserDebugParameter(controls["direction"])
-        
         for leg_id in range (1,7):
             if (leg_id == 1) or (leg_id == 3) or (leg_id == 5) :
-                alphas = kinematics.triangle_w(x, z, h, w, 
-                    sim.t, period, leg_id, params, direction)
-
+                alphas = kinematics.triangle_w(x, z, h, w, sim.t, period, leg_id, params, direction)
                 set_leg_angles(alphas, leg_id, targets, params)
                 
             elif (leg_id == 2) or (leg_id == 4) or (leg_id == 6):
-                alphas = kinematics.triangle_w(x, z, h, w, 
-                    sim.t + 0.5 * period, period, leg_id, params, direction)
-
+                alphas = kinematics.triangle_w(x, z, h, w, sim.t + 0.5 * period, period, leg_id, params, direction)
                 set_leg_angles(alphas, leg_id, targets, params)
 
             state = sim.setJoints(targets)
-            robot_pose = (sim.getRobotPose()) # (tuple(3), tuple(3)) -- (x,y,z), (roll, pitch, yaw)
-            yaw = robot_pose[1][2]
-            sim.lookAt(robot_pose[0])
 
     elif args.mode == "ultrawalk":
         x = p.readUserDebugParameter(controls["x"])
@@ -307,12 +294,9 @@ while True:
 
         for leg_id in range (1,7):
             if (leg_id == 1) or (leg_id == 3) or (leg_id == 5) :
-                alphas = kinematics.triangle_w(x, z, h, w, 
-                    sim.t, period, leg_id, params, direction)
-
+                alphas = kinematics.triangle_w(x, z, h, w, sim.t, period, leg_id, params, direction)
                 set_leg_angles(alphas, leg_id, targets, params)
-                alphas1 = kinematics.triangle_for_rotation(xr, zr, hr, wr, 
-                    sim.t, periodr)
+                alphas1 = kinematics.triangle_for_rotation(xr, zr, hr, wr, sim.t, periodr)
 
                 A1 = alphas[0] + alphas1[0]
                 A2 = alphas[1] + alphas1[1]
@@ -321,11 +305,8 @@ while True:
                 set_leg_angles(ALPHA, leg_id, targets, params)
 
             elif (leg_id == 2) or (leg_id == 4) or (leg_id == 6):
-                alphas = kinematics.triangle_w(x, z, h, w, 
-                    sim.t + 0.5 * period, period, leg_id, params, direction)
-
-                alphas1 = kinematics.triangle_for_rotation(xr, zr, hr, wr, 
-                    sim.t + 0.5 * periodr, periodr)
+                alphas = kinematics.triangle_w(x, z, h, w, sim.t + 0.5 * period, period, leg_id, params, direction)
+                alphas1 = kinematics.triangle_for_rotation(xr, zr, hr, wr, sim.t + 0.5 * periodr, periodr)
 
                 A1 = alphas[0] + alphas1[0]
                 A2 = alphas[1] + alphas1[1]
@@ -407,12 +388,19 @@ while True:
     
     pos, rpy = sim.getRobotPose()
     #print("position = {}, angle = {}".format(pos, rpy))
+
+    """Tester ici pour obtenir des informations sur la vitesse et position de l'hexapode"""
+    
     oldyaw = yaw
     yaw = rpy[2]
-    vitesserotationnelle = (yaw - oldyaw) # A diviser par le temps la période de boucle
+    vitesserotationnelle = (yaw - oldyaw) / time.time() # A diviser par le temps la période de boucle
     print ("Vitesse rotationnelle : {}".format(vitesserotationnelle))
 
-
+    oldposx = posx
+    posx = pos[0]
+    vitessex = (posx - oldposx) * 10 * 10 * 10 / time.time()
+    print(vitessex)
+    
     robot_pose = (sim.getRobotPose()) # (tuple(3), tuple(3)) -- (x,y,z), (roll, pitch, yaw)
     yaw = robot_pose[1][2]
     sim.lookAt(robot_pose[0])
