@@ -10,7 +10,7 @@ pip3 install numpy pygame pybullet onshape-to-robot transforms3d scipy
 ```
 
 # Usage
-There are several simulation files but generaly ```python3 sim_hexa.py --help``` gives some info on how to use them.
+There are several simulation files but generaly ```python3 sim_hexa.py -h``` gives some info on how to use them.
 Make sure your file ```kinematics.py``` is in this folder.
 ```bash
 python3 sim2.py --mode direct
