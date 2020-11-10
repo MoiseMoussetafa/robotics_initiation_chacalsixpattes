@@ -400,7 +400,7 @@ while True:
     posx = pos[0]
     vitessex = (posx - oldposx) * 10 * 10 * 10 / time.time()
     print(vitessex)
-    
+
     robot_pose = (sim.getRobotPose()) # (tuple(3), tuple(3)) -- (x,y,z), (roll, pitch, yaw)
     yaw = robot_pose[1][2]
     sim.lookAt(robot_pose[0])
