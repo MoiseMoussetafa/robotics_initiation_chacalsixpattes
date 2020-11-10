@@ -71,9 +71,18 @@ def set_leg_angles(alphas, leg_id, targets, params):
 
 
 # m_friction
+
+# Menu help -h
 parser = argparse.ArgumentParser()
-parser.add_argument("--mode", "-m", type=str, default="direct", help="test")
+parser.add_argument("-m", "--mode", type=str, default="direct", help="select a MODE")
+parser.add_argument("-ultrawalk", help="MODE ultrawalk", action="store_true")
+parser.add_argument("-walk", help="MODE walk", action="store_true")
+parser.add_argument("-inverse-all", help="MODE inverse-all", action="store_true")
+parser.add_argument("-inverse", help="MODE inverse", action="store_true")
+parser.add_argument("-rotation", help="MODE rotation", action="store_true")
+parser.add_argument("-robot-ik", help="MODE robot-ik", action="store_true")
 args = parser.parse_args()
+
 controls = {}
 robotPath = "phantomx_description/urdf/phantomx.urdf"
 sim = Simulation(robotPath, gui=True, panels=True, useUrdfInertia=False)
