@@ -134,8 +134,8 @@ elif args.mode == "walk":
 
 elif args.mode == "ultrawalk":
     controls["x"] = p.addUserDebugParameter("x", -0.1, 0.1, 0)                              # x
-    controls["height_hexapode"] = p.addUserDebugParameter("height_hexapode", -0.1, 0.1, 0)  # z
-    controls["height_arms"] = p.addUserDebugParameter("height_arms", 0, 0.2, 0.005)         # h
+    controls["height_hexapode"] = p.addUserDebugParameter("height_hexapode", -0.1, 0.1, -0.02)  # z
+    controls["height_arms"] = p.addUserDebugParameter("height_arms", 0, 0.2, 0.03)         # h
     controls["amplitude"] = p.addUserDebugParameter("amplitude", 0.1, 0.5, 0.1)             # w
     controls["speed"] = p.addUserDebugParameter("speed", 0.1, 10, 1)                        # period
     controls["direction"] = p.addUserDebugParameter("direction", -math.pi, math.pi, 0)      # extra-theta
