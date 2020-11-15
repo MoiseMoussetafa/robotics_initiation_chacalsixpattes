@@ -7,9 +7,11 @@ All usefull codes of hexapode simulation in : 0-Simulation
 Some GIFs of coded functions on simulation : 
 https://imgur.com/a/75zg18r
 
+---
+
 ![Creative Commons License](https://i.creativecommons.org/l/by/4.0/88x31.png)
 
-Robotics initiation class materials by Remi Fabre and Steve N'Guyen is licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).
+From Robotics initiation class materials by Remi Fabre and Steve N'Guyen, licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).
 
 # Requirements
 
