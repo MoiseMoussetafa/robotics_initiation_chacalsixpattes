@@ -1,5 +1,5 @@
 # B3 2020 - Hexapode ChacalSixPattes
-_By CANETOS Constantin, INGRAND Loïc, MOUSSETAFA Moïse,	ORTO Dylan_
+_By our team ChacalSixPattes, with CANETOS Constantin, INGRAND Loïc, MOUSSETAFA Moïse,	ORTO Dylan_
 ![Screenshot](title.jpg) 
 
 All usefull codes of hexapode simulation in : **0-Simulation**
@@ -11,7 +11,7 @@ https://imgur.com/a/75zg18r
 
 ![Creative Commons License](https://i.creativecommons.org/l/by/4.0/88x31.png)
 
-From Robotics initiation class materials by Remi Fabre and Steve N'Guyen, licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).
+From Robotics initiation class materials by Remi Fabre and Steve N'Guyen, licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/), and modified by our team.
 
 # Requirements
 
