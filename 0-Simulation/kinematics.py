@@ -439,6 +439,9 @@ def segment_oneway_w(segment_x1, segment_y1, segment_z1, segment_x2, segment_y2,
     return (theta1, theta2, theta3)
 
 def demicircle(x, z, r, t, duration, legID, params, extra_theta):
+    """
+    Demi-circle, used for arms, arc in the air, segment on the floor
+    """
     y_circle = r * math.cos(2 * math.pi * (1 / duration) * t)
     z_circle =+ r * math.sin(2 * math.pi * (1 / duration) * t)
     p1 = [x, y_circle + r ,z]
@@ -455,6 +458,9 @@ def demicircle(x, z, r, t, duration, legID, params, extra_theta):
 
 
 def demicirclefloor(x, z, r, t, duration, legID, params):
+    """
+    Demi-circle, used for arms, arc and segment on the floor
+    """
     y_circle = r * math.cos(2 * math.pi * (1 / duration) * t)
     z_circle =+ r * math.sin(2 * math.pi * (1 / duration) * t)
     p1 = [x, y_circle + r ,z]
