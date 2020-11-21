@@ -398,7 +398,9 @@ while True:
     pos, rpy = sim.getRobotPose()
     #print("position = {}, angle = {}".format(pos, rpy))
 
-    """Tester ici pour obtenir des informations sur la vitesse et position de l'hexapode"""
+    
+    """Work tests here to obtain some infos about the position and speed of the hexapode"""
+    """Need to be improve and write properly after tests"""
     
     oldyaw = yaw
     yaw = rpy[2]
@@ -409,6 +411,8 @@ while True:
     posx = pos[0]
     vitessex = (posx - oldposx) * 10 * 10 * 10 / time.time()
     print(vitessex)
+    
+    """End of work code test"""
 
     robot_pose = (sim.getRobotPose()) # (tuple(3), tuple(3)) -- (x,y,z), (roll, pitch, yaw)
     yaw = robot_pose[1][2]
