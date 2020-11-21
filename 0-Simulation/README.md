@@ -11,7 +11,6 @@ pip3 install numpy pygame pybullet onshape-to-robot transforms3d scipy
 
 Make sure the file ```kinematics.py``` is in this folder.
 
----
 ```bash
 python3 sim_hexa -m ultrawalk
 ```
@@ -32,7 +31,7 @@ python3 sim_hexa -m robot-ik
 ```
 
 ## sim2
-This file is specially used for basic simulations on a single arm and is not useful for hexapod simulation use
+This file is specially used for basic simulations on a single arm and is not useful for hexapod simulation use.
 ```bash
 python3 sim2.py -m direct
 ```
