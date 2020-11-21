@@ -6,11 +6,13 @@ Also, to maintain compatibility with legacy code, the user can chose whether the
 Values in this file should however always be written in meters and in rads.
 """
 
+"""All modes of simulation"""
 BIOLOID = "BIOLOID"
 PHANTOMX = "PHANTOMX"
 PHANTOMX_SIMULATION = "PHANTOMX_SIMULATION"
 ARM_SIMULATION = "ARM_SIMULATION"
 AX12 = "AX12"
+
 MOTOR_TYPE = AX12
 
 """Choose here the mode of simulation"""
