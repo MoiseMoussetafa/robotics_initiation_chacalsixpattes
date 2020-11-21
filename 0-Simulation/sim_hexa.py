@@ -129,20 +129,26 @@ elif args.mode == "robot-ik":
     controls["target_y"] = p.addUserDebugParameter("target_y", -0.1, 0.1)
     controls["target_z"] = p.addUserDebugParameter("target_z", -0.1, 0.1)    
 
-elif args.mode == "rotation":
+elif args.mode == "rotationtriangle":
     controls["target_x"] = p.addUserDebugParameter("target_x", 0, 0.3, 0.180)    
     controls["target_z"] = p.addUserDebugParameter("target_z", -1, 0.5, -0.15)    
     controls["target_h"] = p.addUserDebugParameter("target_h", -0.2, 0.2, 0.001)
     controls["target_w"] = p.addUserDebugParameter("target_w", -0.3, 0.3, 0.1)    
     controls["period"] = p.addUserDebugParameter("period", 0.1, 10, 1)
 
-elif args.mode == "walk":
+elif args.mode == "walktriangle":
     controls["x"] = p.addUserDebugParameter("x", -0.1, 0.1, 0)                                      # x
     controls["height_hexapode"] = p.addUserDebugParameter("height_hexapode", -0.1, 0.1, 0)          # z
     controls["height_arms"] = p.addUserDebugParameter("height_arms", 0, 0.2, 0.005)                 # h
     controls["amplitude"] = p.addUserDebugParameter("amplitude", 0.1, 0.5, 0.1)                     # w
     controls["speed"] = p.addUserDebugParameter("speed", 0.1, 10, 1)                                # period
     controls["direction"] = p.addUserDebugParameter("direction", -math.pi, math.pi, 0)              # extra-theta
+
+elif args.mode == "walkcircle":
+    controls["target_z"] = p.addUserDebugParameter("target_z", -0.1, 0.1, 0)          
+    controls["target_r"] = p.addUserDebugParameter("target_r", 0.01, 0.5, 0.025)                 
+    controls["duration"] = p.addUserDebugParameter("duration", 0.5, 1, 0.595)                     
+    controls["extra_theta"] = p.addUserDebugParameter("extra_theta", 0, 2*math.pi, 0)             
 
 elif args.mode == "ultrawalk":
     controls["x"] = p.addUserDebugParameter("x", -0.1, 0.1, 0)                                      # x
@@ -173,6 +179,12 @@ elif args.mode == "inverse-all":
     controls["target_x6"] = p.addUserDebugParameter("target_x6", -0.4, 0.4, alphas[0])
     controls["target_y6"] = p.addUserDebugParameter("target_y6", -0.4, 0.4, alphas[1])
     controls["target_z6"] = p.addUserDebugParameter("target_z6", -0.4, 0.4, alphas[2])
+
+elif args.mode == "rotatecircle":
+    controls["target_z"] = p.addUserDebugParameter("target_z", -0.1, 0, 0)
+    controls["target_r"] = p.addUserDebugParameter("target_r", 0.01, 0.5, 0.023)
+    controls["target_duration"] = p.addUserDebugParameter("target_duration", 0.5, 1, 1)
+
 
 initRobot(params)
 time.sleep(0)
@@ -251,7 +263,7 @@ while True:
             set_leg_angles(alphas, leg_id, targets, params)
         state = sim.setJoints(targets)
 
-    elif args.mode == "rotation":
+    elif args.mode == "rotationtriangle":
         x = p.readUserDebugParameter(controls["target_x"])
         z = p.readUserDebugParameter(controls["target_z"])
         h = p.readUserDebugParameter(controls["target_h"])
@@ -269,7 +281,7 @@ while True:
         state = sim.setJoints(targets)
         #sim.setRobotPose([0, 0, 0.5], [0, 0, 0, 1])
             
-    elif args.mode == "walk":
+    elif args.mode == "walktriangle":
         x = p.readUserDebugParameter(controls["x"])
         z = p.readUserDebugParameter(controls["height_hexapode"])
         h = p.readUserDebugParameter(controls["height_arms"])
@@ -285,6 +297,22 @@ while True:
                 alphas = kinematics.triangle_w(x, z, h, w, sim.t + 0.5 * period, period, leg_id, params, direction)
                 set_leg_angles(alphas, leg_id, targets, params)
 
+            state = sim.setJoints(targets)
+
+    elif args.mode == "walkcircle":
+        x = 0
+        z = p.readUserDebugParameter(controls["target_z"])
+        r = p.readUserDebugParameter(controls["target_r"])
+        duration = p.readUserDebugParameter(controls["duration"])
+        extra_theta = p.readUserDebugParameter(controls["extra_theta"])
+        for leg_id in range (1,7):
+            if (leg_id == 1) or (leg_id == 3) or (leg_id == 5) :
+                alphas = kinematics.demicircle(x, z, r, sim.t, duration, leg_id, params, extra_theta)
+                set_leg_angles(alphas, leg_id, targets, params)
+                
+            elif (leg_id == 2) or (leg_id == 4) or (leg_id == 6):
+                alphas = kinematics.demicircle(x, z, r, sim.t + 0.5*duration, duration, leg_id, params, extra_theta)
+                set_leg_angles(alphas, leg_id, targets, params)
             state = sim.setJoints(targets)
 
     elif args.mode == "ultrawalk":
@@ -395,6 +423,22 @@ while True:
         # Surelevation robot pose
         sim.setRobotPose([0, 0, 0.5], [0, 0, 0, 1])
     
+    elif args.mode == "rotatecircle" :
+        x = 0
+        z = p.readUserDebugParameter(controls["target_z"])
+        r = p.readUserDebugParameter(controls["target_r"])
+        duration = p.readUserDebugParameter(controls["target_duration"])
+        for leg_id in range (1,7):
+            if (leg_id == 1) or (leg_id == 3) or (leg_id == 5) :
+                alphas = kinematics.demicirclefloor(x, z, r, sim.t, duration, leg_id, params)
+                set_leg_angles(alphas, leg_id, targets, params)
+
+            elif (leg_id == 2) or (leg_id == 4) or (leg_id == 6) :
+                alphas = kinematics.demicirclefloor(x, z, r, sim.t + 0.5*duration, duration, leg_id, params)
+                set_leg_angles(alphas, leg_id, targets, params)
+            
+            state = sim.setJoints(targets)
+
     pos, rpy = sim.getRobotPose()
     #print("position = {}, angle = {}".format(pos, rpy))
 

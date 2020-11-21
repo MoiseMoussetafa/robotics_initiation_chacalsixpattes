@@ -212,7 +212,11 @@ def computeIKOriented(x, y, z, legID, params, extra_theta=0, verbose=False):
 # Given the destination point (x, y, z) of a limb with 3 rotational axes separated by the distances (l1, l2, l3),
 # returns the angles to apply to the 3 axes
 def computeIKNotOriented(x, y, z, legID, params, extra_theta=0, verbose=False):
-    None
+    return computeIK(
+        x + params.initLeg[legID - 1][0],
+        y + params.initLeg[legID - 1][1],
+        z + params.z
+    )
 
 
 def rotaton_2D(x, y, z, theta):
@@ -371,21 +375,6 @@ def circle(x, z, r, t, duration):
     alphas = computeIK(x, y_circle, z_circle + z)
     return alphas
 
-def demicircle(x, y, z, r, t, duration, legID, params, extra_theta):
-    """Not used for the moment, not working now"""
-    y_circle = r * math.cos(2 * math.pi * (1 / duration) * t)
-    z_circle =+ r * math.sin(2 * math.pi * (1 / duration) * t)
-    p1 = [x, y_circle + r, z]
-    p2 = [x, y_circle - r, z]
-    if z_circle < 0 :
-        alphas = segment_oneway(p1[0], p1[1], p1[2], 
-            p2[0], p2[1], p2[2], 
-            t, duration)
-    else :
-        alphas = computeIKOriented(x, y_circle, z_circle + z, legID, params, extra_theta)
-    return alphas
-
-
 def segment(segment_x1, segment_y1, segment_z1,
             segment_x2, segment_y2, segment_z2, t, duration):
     """
@@ -448,6 +437,38 @@ def segment_oneway_w(segment_x1, segment_y1, segment_z1, segment_x2, segment_y2,
     theta1, theta2, theta3 = computeIKOriented(x,y,z, leg_id, params, extra_theta)
 
     return (theta1, theta2, theta3)
+
+def demicircle(x, z, r, t, duration, legID, params, extra_theta):
+    y_circle = r * math.cos(2 * math.pi * (1 / duration) * t)
+    z_circle =+ r * math.sin(2 * math.pi * (1 / duration) * t)
+    p1 = [x, y_circle + r ,z]
+    p2 = [x, y_circle - r, z]
+    d1 = segdist(p1, p2)
+    d2 = math.pi * r
+    periode = (d1/(d1+d2)) * duration
+
+    if t < periode :
+        alphas = segment_oneway_w(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2], t, periode, legID, params, extra_theta)
+    else :
+        alphas = computeIKOriented(x, y_circle, z_circle + z, legID, params, extra_theta , verbose=False)
+    return alphas
+
+
+def demicirclefloor(x, z, r, t, duration, legID, params):
+    y_circle = r * math.cos(2 * math.pi * (1 / duration) * t)
+    z_circle =+ r * math.sin(2 * math.pi * (1 / duration) * t)
+    p1 = [x, y_circle + r ,z]
+    p2 = [x, y_circle - r, z]
+    d1 = segdist(p1,p2)
+    d2 = math.pi * r
+    periode = (d1/(d1+d2)) * duration
+
+    if t < periode :
+        alphas = demicircle(x, z, r, t, duration, legID, params, extra_theta = 0)
+    else :
+        alphas = computeIKNotOriented(x, y_circle, z_circle + z, legID, params, verbose=False)
+    return alphas
+
 
 def main():
     print(
