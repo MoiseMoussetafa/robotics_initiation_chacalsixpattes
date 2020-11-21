@@ -282,7 +282,7 @@ def segdist(P1, P2):
 
 def triangle_w(x, z, h, w, t, period, leg_id, params, extra_theta):
     """
-    Triangle used for walk
+    Function triangle specially used for walk
     """
     alphas = [0,0,0]
     points = trianglePoints2(x,z,h,w)
@@ -308,7 +308,7 @@ def triangle_w(x, z, h, w, t, period, leg_id, params, extra_theta):
 
 def triangle_for_rotation(x, z, h, w, t, period=5):
     """
-    Triangle used for rotation
+    Function triangle specially used for rotation
     """
     points = trianglePoints(x,z,h,w)
     d1 = segdist(points[0],points[1])
@@ -372,6 +372,7 @@ def circle(x, z, r, t, duration):
     return alphas
 
 def demicircle(x, y, z, r, t, duration, legID, params, extra_theta):
+    """Not used for the moment, not working now"""
     y_circle = r * math.cos(2 * math.pi * (1 / duration) * t)
     z_circle =+ r * math.sin(2 * math.pi * (1 / duration) * t)
     p1 = [x, y_circle + r, z]
@@ -421,7 +422,7 @@ def segment_modulo(segment_x1, segment_y1, segment_z1, segment_x2, segment_y2, s
 
 def segment_oneway(segment_x1, segment_y1, segment_z1, segment_x2, segment_y2, segment_z2, t, duration):
     """
-    Used for triangle in the rotation, segment in only one direction
+    Function segment used for triangle in the rotation, a segment in only one direction
     """
     nt = math.fmod(t,duration)
         
@@ -436,7 +437,7 @@ def segment_oneway(segment_x1, segment_y1, segment_z1, segment_x2, segment_y2, s
 
 def segment_oneway_w(segment_x1, segment_y1, segment_z1, segment_x2, segment_y2, segment_z2, t, duration, leg_id, params, extra_theta):
     """
-    Used for triangle in the walk, segment in only one direction
+    Function segment used for triangle in the walk, a segment in only one direction
     """
     nt = math.fmod(t,duration)
         
