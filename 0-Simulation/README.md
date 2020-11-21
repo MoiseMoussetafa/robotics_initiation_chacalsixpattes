@@ -43,8 +43,8 @@ python3 sim_hexa -m inverse
 python3 sim_hexa -m robot-ik
 ```
 
-# Videos
+# One demo video 
 https://youtu.be/w3psAbh3AoM
 ```bash
-python sim_hexa.py --mode frozen-direct
+python3 sim_hexa.py --mode frozen-direct
 ```
