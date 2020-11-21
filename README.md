@@ -2,11 +2,6 @@
 _By our team ChacalSixPattes, with CANETOS Constantin, INGRAND Loïc, MOUSSETAFA Moïse,	ORTO Dylan_
 ![Screenshot](title.jpg) 
 
-All usefull codes of hexapode simulation in : **0-Simulation**
-
-Some GIFs of coded functions on simulation : 
-https://imgur.com/a/75zg18r
-
 ---
 
 ## Requirements
@@ -29,7 +24,11 @@ git clone git@bitbucket.org:RemiFabre/robotics_initiation.git
 ```
 
 ## Get started 
-The usefull code for the hexapode simulation is in [O-Simulation](https://github.com/MoiseMoussetafa/robotics_initiation_chacalsixpattes/tree/main/0-Simulation)
+The usefull code for the hexapode simulation is in [0-Simulation](https://github.com/MoiseMoussetafa/robotics_initiation_chacalsixpattes/tree/main/0-Simulation)
 
 ## Licence
-This project is under MIT Licence - see the [Licence](https://github.com/MoiseMoussetafa/robotics_initiation_chacalsixpattes/blob/main/LICENSE] file for details. 
+This project is under MIT Licence - see the [Licence](https://github.com/MoiseMoussetafa/robotics_initiation_chacalsixpattes/blob/main/LICENSE) file for details. 
+
+## Demonstration
+Some GIFs of coded functions on simulation : 
+https://imgur.com/a/75zg18r
