@@ -6,6 +6,12 @@ Tested on Python 3.6 but should work on any recent version of Python :
 ```bash
 pip3 install numpy pygame pybullet onshape-to-robot transforms3d scipy
 ```
+Make sure the files ```kinematics.py``` and ```constants.py``` are in this folder.
+
+## constants
+- When **sim_hexa.py** is used, need to put ```PHANTOMX_SIMULATION``` at the location provided by the mode choice
+- When **sim2.py** is used, need to put ```ARM_SIMULATION``` at the location provided by the mode choice
+
 ## sim_hexa
 ```python3 sim_hexa.py -h``` gives some info on how to use the file for the hexapod simulation.
 ```bash
