@@ -2,7 +2,6 @@
 _An hexapod simulation in Python, by our team ChacalSixPattes, with CANETOS Constantin, INGRAND Loïc, MOUSSETAFA Moïse,	ORTO Dylan_
 ![Screenshot](title.jpg) 
 
----
 
 ## Requirements
 
