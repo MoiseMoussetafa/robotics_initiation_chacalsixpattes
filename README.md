@@ -15,22 +15,16 @@ From Robotics initiation class materials by Remi Fabre and Steve N'Guyen, licens
 
 # Requirements
 
-## Every student should:
-
-- Have a git account setuped and be confortable with git. Here is a [git tutorial](https://www.atlassian.com/git/tutorials/setting-up-a-repository) if needed.
-- Clone this repository
+- A git account setuped : [git tutorial](https://www.atlassian.com/git/tutorials/setting-up-a-repository) if needed.
+- Clone this repository, the code base 
 ```bash
 git clone git@bitbucket.org:RemiFabre/robotics_initiation.git
 ```
 - Install the Pypot library: https://github.com/poppy-project/pypot
 ```bash
-python setup.py install --user
+python3 setup.py install --user
 ```
 
-## Every team should:
-
-- Create a private work repository with the name "robotics_initiation_teamX" where X is the ID of your team.
-- Give repository access to all team members and the teacher. The state of the repository and the quality of the code will be taken into account for scoring.
-- Add a README.md that explains how to use your work 
-- Add a license ([cf CreativeCommons](https://creativecommons.org/choose/))
-- Add a .gitignore (you can copy the one in this repository)
+# This repository
+- is private for the team, all team members and the teacher have access to this.
+- have a README.md that explains how to use the work, and a .gitignore, the same of the code base
