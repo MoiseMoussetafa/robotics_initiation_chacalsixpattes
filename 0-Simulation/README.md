@@ -4,14 +4,14 @@ From Robotics initiation class materials by Passault Grégoire, Olivier Ly and R
 A simple simulation based on PyBullet.
 
 # Requirements
-Tested on Python 3.6 but should work on any recent version of Python:
+Tested on Python 3.6 but should work on any recent version of Python :
 ```bash
 pip3 install numpy pygame pybullet onshape-to-robot transforms3d scipy
 ```
 
 # Usage
 There are several simulation files but generaly ```python3 sim_hexa.py -h``` gives some info on how to use them.
-Make sure your file ```kinematics.py``` is in this folder.
+Make sure the file ```kinematics.py``` is in this folder.
 ```bash
 python3 sim2.py --mode direct
 ```
