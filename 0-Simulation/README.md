@@ -1,28 +1,25 @@
-From Robotics initiation class materials by Passault Grégoire, Olivier Ly and Remi Fabre, licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/), and modified by our team.
-
 # Simulation
-A simple simulation based on PyBullet.
+An hexapod simulation based on PyBullet.
 
 # Requirements
 Tested on Python 3.6 but should work on any recent version of Python :
 ```bash
 pip3 install numpy pygame pybullet onshape-to-robot transforms3d scipy
 ```
-
-# Usage
-There are several simulation files but generaly ```python3 sim_hexa.py -h``` gives some info on how to use them.
+## sim_hexa
+```python3 sim_hexa.py -h``` gives some info on how to use the file in the hexapod simulation.
 Make sure the file ```kinematics.py``` is in this folder.
 ```bash
-python3 sim2.py --mode direct
+python3 sim2.py -m direct
 ```
 ```bash
-python3 sim2.py --mode inverse
+python3 sim2.py -m inverse
 ```
 ```bash
-python3 sim2.py --mode circle
+python3 sim2.py -m circle
 ```
 ```bash
-python3 sim2.py --mode triangle
+python3 sim2.py -m triangle
 ```
 ```bash
 python3 sim_hexa -m ultrawalk
@@ -43,8 +40,5 @@ python3 sim_hexa -m inverse
 python3 sim_hexa -m robot-ik
 ```
 
-# One demo video 
-https://youtu.be/w3psAbh3AoM
-```bash
-python3 sim_hexa.py --mode frozen-direct
-```
+## sim2
+This file is specially used for basic simulations on a single arm and is not useful for hexapod simulation use
