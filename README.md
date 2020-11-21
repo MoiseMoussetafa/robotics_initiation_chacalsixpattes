@@ -23,6 +23,6 @@ python3 setup.py install --user
 
 # This project
 - is private for the team, all team members and the teacher have access to this.
-- have a README.md that explains how to use the work, and a .gitignore, the same of the code base
+- have some README.md that explain how to use the work
 - is licensed under the MT Licence - see the LICENSE file for details
 - use for base Robotics initiation class materials by Remi Fabre and Steve N'Guyen, licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/), and modified by our team with the authorization.
