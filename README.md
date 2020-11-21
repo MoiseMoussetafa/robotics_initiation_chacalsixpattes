@@ -29,7 +29,7 @@ git clone git@bitbucket.org:RemiFabre/robotics_initiation.git
 ```
 
 ## Get started 
-The usefull code for the hexapode simulation is in (O-Simulation)[https://github.com/MoiseMoussetafa/robotics_initiation_chacalsixpattes/tree/main/0-Simulation]
+The usefull code for the hexapode simulation is in [O-Simulation](https://github.com/MoiseMoussetafa/robotics_initiation_chacalsixpattes/tree/main/0-Simulation)
 
 ## Licence
-This project is under MIT Licence - see the (Licence)[https://github.com/MoiseMoussetafa/robotics_initiation_chacalsixpattes/blob/main/LICENSE] file for more details.
+This project is under MIT Licence - see the Lic(ttps://github.com/MoiseMoussetafa/robotics_initiation_chacalsixpattes/blob/main/LICENSE] file for more details. 
