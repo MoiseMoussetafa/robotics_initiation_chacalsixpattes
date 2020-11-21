@@ -7,10 +7,7 @@ Tested on Python 3.6 but should work on any recent version of Python :
 pip3 install numpy pygame pybullet onshape-to-robot transforms3d scipy
 ```
 ## sim_hexa
-```python3 sim_hexa.py -h``` gives some info on how to use the file in the hexapod simulation.
-
-Make sure the file ```kinematics.py``` is in this folder.
-
+```python3 sim_hexa.py -h``` gives some info on how to use the file for the hexapod simulation.
 ```bash
 python3 sim_hexa -m ultrawalk
 ```
