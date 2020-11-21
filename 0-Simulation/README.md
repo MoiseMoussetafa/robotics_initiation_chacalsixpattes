@@ -9,8 +9,11 @@ pip3 install numpy pygame pybullet onshape-to-robot transforms3d scipy
 Make sure the files ```kinematics.py``` and ```constants.py``` are in this folder.
 
 ## constants
-- When **sim_hexa.py** is used, need to put ```PHANTOMX_SIMULATION``` at the location provided by the mode choice
-- When **sim2.py** is used, need to put ```ARM_SIMULATION``` at the location provided by the mode choice
+In this file :
+- When **sim_hexa.py** is used, for hexapod simulation, need to put ```PHANTOMX_SIMULATION``` at the location provided by the mode choice
+- When **sim2.py** is used, for arm simulation, need to put ```ARM_SIMULATION``` at the location provided by the mode choice
+After the choice of the mode, save the file and you can go use the simulation you want.
+_By default, the ARM_SIMULATION is selected, for hexapod simulation_
 
 ## sim_hexa
 ```python3 sim_hexa.py -h``` gives some info on how to use the file for the hexapod simulation.
