@@ -9,20 +9,27 @@ https://imgur.com/a/75zg18r
 
 ---
 
-# Requirements
+## Requirements
 
 - A git account setuped : [git tutorial](https://www.atlassian.com/git/tutorials/setting-up-a-repository) if needed.
-- Clone this repository, the code base 
-```bash
-git clone git@bitbucket.org:RemiFabre/robotics_initiation.git
-```
+- Install Python3 with pip
 - Install the Pypot library: https://github.com/poppy-project/pypot
 ```bash
 python3 setup.py install --user
 ```
 
-# This project
-- is private for the team, all team members and the teacher have access to this.
-- have some README.md that explain how to use the work
-- is licensed under the MT Licence - see the LICENSE file for details
-- use for base Robotics initiation class materials by Remi Fabre and Steve N'Guyen, licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/), and modified by our team with the authorization.
+## Installation
+```bash
+git clone https://github.com/MoiseMoussetafa/robotics_initiation_chacalsixpattes.git
+cd robotics_initiation_chacalsixpattes
+```
+This project is based on : https://bitbucket.org/RemiFabre/robotics_initiation/src/master/
+```bash
+git clone git@bitbucket.org:RemiFabre/robotics_initiation.git
+```
+
+## Get started 
+The usefull code for the hexapode simulation is in (O-Simulation)[https://github.com/MoiseMoussetafa/robotics_initiation_chacalsixpattes/tree/main/0-Simulation]
+
+## Licence
+This project is under MIT Licence - see the (Licence)[https://github.com/MoiseMoussetafa/robotics_initiation_chacalsixpattes/blob/main/LICENSE] file for more details.
