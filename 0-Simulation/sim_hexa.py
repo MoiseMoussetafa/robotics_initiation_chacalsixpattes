@@ -155,14 +155,14 @@ elif args.mode == "ultrawalk":
 
 elif args.mode == "ultrawalkcircle":
     controls["target_z"] = p.addUserDebugParameter("target_z", -0.1, 0.1, 0)          
-    controls["target_r"] = p.addUserDebugParameter("target_r", 0.01, 0.5, 0.025)                 
-    controls["duration"] = p.addUserDebugParameter("duration", 0.5, 1, 0.595)                     
-    controls["extra_theta"] = p.addUserDebugParameter("extra_theta", 0, 10, 5.5) 
+    controls["target_r"] = p.addUserDebugParameter("target_r", 0.01, 0.05, 0.025)                 
+    controls["duration"] = p.addUserDebugParameter("duration", 0.01, 5, 0.595)                     
+    controls["extra_theta"] = p.addUserDebugParameter("extra_theta", 0, 9.5, 4.75) 
     controls["target_w"] = p.addUserDebugParameter("target_w", -0.04, 0.04, 0)                     
             
 elif args.mode == "rotationcircle":
     controls["target_z"] = p.addUserDebugParameter("target_z", -0.1, 0, 0)
-    controls["target_r"] = p.addUserDebugParameter("target_r", 0.01, 0.5, 0.023)
+    controls["target_r"] = p.addUserDebugParameter("target_r", 0.001, 0.1, 0.023)
     controls["target_duration"] = p.addUserDebugParameter("target_duration", 0.01, 1, 1)
 
 elif args.mode == "walkcircle":
