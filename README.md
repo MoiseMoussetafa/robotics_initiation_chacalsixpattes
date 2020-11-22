@@ -1,5 +1,6 @@
 # B3 2020 - Hexapode ChacalSixPattes
 _An hexapod simulation in Python, by our team ChacalSixPattes, with CANETOS Constantin, INGRAND Loïc, MOUSSETAFA Moïse,	ORTO Dylan_
+
 ![Screenshot](title.jpg) 
 
 
@@ -27,6 +28,8 @@ The usefull code for the hexapode simulation, with explications, is in [0-Simula
 
 ## Licence
 This project is under MIT Licence - see the [Licence](https://github.com/MoiseMoussetafa/robotics_initiation_chacalsixpattes/blob/main/LICENSE) file for details. 
+
+<img src=https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/License_icon-mit-88x31-2.svg/1280px-License_icon-mit-88x31-2.svg.png width="100" height="35">
 
 ## Demonstration
 Some GIFs of coded functions on simulation : 
