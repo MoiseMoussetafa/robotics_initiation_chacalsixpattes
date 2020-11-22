@@ -148,7 +148,7 @@ elif args.mode == "ultrawalk":
     controls["x"] = p.addUserDebugParameter("x", -0.1, 0.1, 0)                                      # x
     controls["height_hexapode"] = p.addUserDebugParameter("height_hexapode", -0.1, 0.1, -0.02)      # z
     controls["height_arms"] = p.addUserDebugParameter("height_arms", 0, 0.2, 0.03)                  # h
-    controls["amplitude"] = p.addUserDebugParameter("amplitude", 0.1, 0.5, 0.1)                     # w
+    controls["amplitude"] = p.addUserDebugParameter("amplitude", 0.001, 0.5, 0.1)                     # w
     controls["speed"] = p.addUserDebugParameter("speed", 0.1, 10, 1)                                # period
     controls["direction"] = p.addUserDebugParameter("direction", -math.pi, math.pi, 0)              # extra-theta
     controls["target_w"] = p.addUserDebugParameter("target_w", -0.3, 0.3, 0)                        # w of rotation
@@ -157,13 +157,13 @@ elif args.mode == "ultrawalkcircle":
     controls["target_z"] = p.addUserDebugParameter("target_z", -0.1, 0.1, 0)          
     controls["target_r"] = p.addUserDebugParameter("target_r", 0.01, 0.5, 0.025)                 
     controls["duration"] = p.addUserDebugParameter("duration", 0.5, 1, 0.595)                     
-    controls["extra_theta"] = p.addUserDebugParameter("extra_theta", 0, 2*math.pi, 0) 
+    controls["extra_theta"] = p.addUserDebugParameter("extra_theta", 0, 10, 5.5) 
     controls["target_w"] = p.addUserDebugParameter("target_w", -0.04, 0.04, 0)                     
             
 elif args.mode == "rotationcircle":
     controls["target_z"] = p.addUserDebugParameter("target_z", -0.1, 0, 0)
     controls["target_r"] = p.addUserDebugParameter("target_r", 0.01, 0.5, 0.023)
-    controls["target_duration"] = p.addUserDebugParameter("target_duration", 0.5, 1, 1)
+    controls["target_duration"] = p.addUserDebugParameter("target_duration", 0.01, 1, 1)
 
 elif args.mode == "walkcircle":
     controls["target_z"] = p.addUserDebugParameter("target_z", -0.1, 0.1, 0)          
@@ -193,7 +193,7 @@ elif args.mode == "inverse-all":
     controls["target_z6"] = p.addUserDebugParameter("target_z6", -0.4, 0.4, alphas[2])
 
 initRobot(params)
-time.sleep(0)
+time.sleep(0.5)
 
 while True:
     targets = {}
@@ -397,6 +397,7 @@ while True:
             
             state = sim.setJoints(targets)
 
+
     elif args.mode == "walkcircle":
         x = 0
         z = p.readUserDebugParameter(controls["target_z"])
@@ -490,14 +491,16 @@ while True:
     """Work tests here to obtain some infos about the position and speed of the hexapode"""
     """Need to be improve and write properly after tests"""
     
+    """
     oldyaw = yaw
     yaw = rpy[2]
     vitesserotationnelle = (yaw - oldyaw) / time.time() # A diviser par le temps la période de boucle
     print ("Vitesse rotationnelle : {}".format(vitesserotationnelle))
+    """
 
     oldposx = posx
     posx = pos[0]
-    vitessex = (posx - oldposx) * 10 * 10 * 10 / time.time()
+    vitessex = (posx - oldposx) / time.time()
     print(vitessex)
     
     """End of work code test"""
