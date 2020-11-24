@@ -89,6 +89,9 @@ sim = Simulation(robotPath, gui=True, panels=True, useUrdfInertia=False)
 # sim.setFloorFrictions(lateral=0, spinning=0, rolling=0)
 pos, rpy = sim.getRobotPose()
 sim.setRobotPose([0, 0, 0.5], [0, 0, 0, 1])
+
+raw = 0
+pitch = 0
 yaw = 0
 posx = 0
 
@@ -491,20 +494,34 @@ while True:
     """Work tests here to obtain some infos about the position and speed of the hexapode"""
     """Need to be improve and write properly after tests"""
     
+
     """
+    oldraw = raw
+    raw = rpy[0]
+    vraw = (raw - oldraw) / time.time()
+    print ("vraw : {0:.1f}".format(vraw))
+
+    oldpitch = pitch
+    pitch = rpy[1]   
+    vpitch = (pitch - oldpitch) / time.time()
+    vpitch = vpitch * 180/math.pi
+    print ("vpitch : {0:.1f}".format(vpitch))
+    """
+    
     oldyaw = yaw
     yaw = rpy[2]
-    vitesserotationnelle = (yaw - oldyaw) / time.time() # A diviser par le temps la période de boucle
-    print ("Vitesse rotationnelle : {}".format(vitesserotationnelle))
+    vyaw = (yaw - oldyaw) / time.time() # A diviser par le temps la période de boucle
+    vyaw = vyaw * 180/math.pi
+    print ("vyaw : {0}".format(vyaw))
+    
     """
-
     oldposx = posx
     posx = pos[0]
     vitessex = (posx - oldposx) / time.time()
     print(vitessex)
+    """
     
     """End of work code test"""
-
     robot_pose = (sim.getRobotPose()) # (tuple(3), tuple(3)) -- (x,y,z), (roll, pitch, yaw)
     yaw = robot_pose[1][2]
     sim.lookAt(robot_pose[0])
