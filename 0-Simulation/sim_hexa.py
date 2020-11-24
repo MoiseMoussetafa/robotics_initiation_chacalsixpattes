@@ -8,6 +8,7 @@ import pybullet as p
 from onshape_to_robot.simulation import Simulation
 import kinematics
 from constants import *
+from math import *
 
 # from squaternion import Quaternion
 from scipy.spatial.transform import Rotation
@@ -92,6 +93,9 @@ sim.setRobotPose([0, 0, 0.5], [0, 0, 0, 1])
 raw = 0
 pitch = 0
 yaw = 0
+
+posx = 0
+posy = 0
 
 leg_center_pos = [0.1248, -0.06164, 0.001116 + 0.5]
 leg_angle = -math.pi / 4
@@ -365,7 +369,7 @@ while True:
         for leg_id in range (1,7):
             if (leg_id == 1) or (leg_id == 3) or (leg_id == 5) :
                 alphas = kinematics.demicircle(x, z, r, sim.t, duration, leg_id, params, extra_theta)
-                if w == 0 :
+                if w < 0.05 :
                     alphas1 = kinematics.segment_oneway_w(0,0,zr,0,0,zr,sim.t,duration,leg_id,params,extra_theta)
                 else :
                     alphas1 = kinematics.demicirclefloor(xr, zr, w, sim.t, duration, leg_id, params)
@@ -377,7 +381,7 @@ while True:
 
             elif (leg_id == 2) or (leg_id == 4) or (leg_id == 6):
                 alphas = kinematics.demicircle(x, z, r, sim.t + 0.5*duration, duration, leg_id, params, extra_theta)
-                if w == 0 :
+                if w < 0.05 :
                     alphas1 = kinematics.segment_oneway_w(0,0,zr,0,0,zr,sim.t,duration,leg_id,params, extra_theta)
                 else :
                     alphas1 = kinematics.demicirclefloor(xr, zr, w, sim.t + 0.5*duration, duration, leg_id, params)
@@ -513,21 +517,27 @@ while True:
     print ("vpitch : {0:.1f}".format(vpitch))
     """
     
+    """
     oldyaw = yaw
     yaw = rpy[2]
-    vyaw = (yaw - oldyaw) / time.time() # A diviser par le temps la période de boucle
+    vyaw = ((yaw - oldyaw)*10**11) / time.time() # A diviser par le temps la période de boucle
     vyaw = vyaw * 180/math.pi
-    print ("vyaw : {0}".format(vyaw))
-    
+    print ("vyaw : {0:.1f}".format(vyaw))
     """
+    
+    ""
     oldposx = posx
     posx = pos[0]
-    vitessex = (posx - oldposx) / time.time()
-    print(vitessex)
-    """
+    oldposy = posy
+    posy = pos[1]
+    
+    vitesse = (sqrt(((posx - oldposx)/time.time())**2 + ((posy - oldposy)/time.time())**2 ))**2
+    #vitessex = ( ( (posx - oldposx) + (posy - oldposy) ) * 10**13 )/ time.time()
+    print("speed : {0:.1f}".format(vitesse*10**27))
+        
+    
     
     """End of work code test"""
-
 
 
     """Set the hexapod in the air"""
@@ -535,6 +545,7 @@ while True:
     if airpause == 1 :
         rot_quat = to_pybullet_quaternion(rpy[0], rpy[1], rpy[2])
         sim.setRobotPose([pos[0], pos[1], 0.5], [0,0,rot_quat[2],1]) 
+
 
     robot_pose = (sim.getRobotPose()) # (tuple(3), tuple(3)) -- (x,y,z), (roll, pitch, yaw)
     yaw = robot_pose[1][2]
