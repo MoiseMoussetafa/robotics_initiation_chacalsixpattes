@@ -1,4 +1,5 @@
 import math
+import time
 from constants import *
 from scipy.optimize import minimize
 import numpy as np
@@ -217,6 +218,35 @@ def computeIKNotOriented(x, y, z, legID, params, extra_theta=0, verbose=False):
         y + params.initLeg[legID - 1][1],
         z + params.z
     )
+
+def computeIKRobotCentered(x, y, z, legID, verbose=False):
+    x -= LEG_CENTER_POS[legID][0]
+    y -= LEG_CENTER_POS[legID][1]
+    z -= LEG_CENTER_POS[legID][2]
+
+    new_pos = rotaton_2D(x,y,z, -LEG_ANGLES[legID])
+
+    result = computeIK(new_pos[1], new_pos[2], new_pos[3], verbose=verbose, use_rads=True)
+
+    return result
+
+
+def rotation_new(x, y, z, duration=1):
+    max_angle = math.pi/8
+
+    result = []
+
+    for legID in range (0, 6):
+        angle = max_angle * math.sin(2 * math.pi * time.time() * 0.5) + LEG_ANGLES[legID]
+
+        r = 0.3
+
+        x = r * math.cos(angle)
+        y = r * math.sin(angle)
+
+        result.append() = computeIKRobotCentered(x,y,z, ledID, verbose=False)
+
+    return result
 
 
 def rotaton_2D(x, y, z, theta):
