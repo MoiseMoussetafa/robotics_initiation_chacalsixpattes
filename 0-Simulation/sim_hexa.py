@@ -61,6 +61,7 @@ def to_pybullet_quaternion(roll, pitch, yaw, degrees=False):
     # print(rot_quat)
     return rot_quat
 
+
 # Updates the values of the dictionnary targets to set 3 angles to given leg
 def set_leg_angles(alphas, leg_id, targets, params):
     leg = params.legs[leg_id]
@@ -104,8 +105,10 @@ params = Parameters ()
 bx = 0.07
 bz = 0.25
 
-controls["airpause"] = p.addUserDebugParameter("OFF < airpause > ON", 0, 1, 0)  
-controls["debuglines"] = p.addUserDebugParameter("OFF < debuglines > ON", 0, 1, 0)  
+# Dictionary of personal controls 
+controlp = {}
+controlp["airpause"] = p.addUserDebugParameter("OFF < airpause > ON", 0, 1, 0)  
+controlp["debuglines"] = p.addUserDebugParameter("OFF < debuglines > ON", 0, 1, 0)  
 
 
 if args.mode == "frozen-direct":
@@ -116,7 +119,7 @@ if args.mode == "frozen-direct":
         print(name)
         if "c1" in name or "thigh" in name or "tibia" in name:
             controls[name] = p.addUserDebugParameter(name, -math.pi, math.pi, 0)
-
+        
 elif args.mode == "direct":
     for name in sim.getJoints():
         print(name)
@@ -162,7 +165,6 @@ elif args.mode == "ultrawalk":
     controls["target_w"] = p.addUserDebugParameter("target_w > rotation", -0.3, 0.3, 0)            
     controls["xr"] = p.addUserDebugParameter("xr", 0.15, 0.2, 0.18) 
               
-
 elif args.mode == "ultrawalkcircle":
     controls["target_z"] = p.addUserDebugParameter("target_z", -0.1, 0.1, 0)          
     controls["target_r"] = p.addUserDebugParameter("target_r", 0.01, 0.05, 0.025)                 
@@ -251,10 +253,12 @@ while True:
         # )
         state = sim.setJoints(targets)
 
+
     elif args.mode == "direct":
         for name in controls.keys():
             targets[name] = p.readUserDebugParameter(controls[name])
         state = sim.setJoints(targets)
+
 
     elif args.mode == "inverse":
         x = p.readUserDebugParameter(controls["target_x"])
@@ -279,6 +283,7 @@ while True:
             cross, T, to_pybullet_quaternion(0, 0, leg_angle)
         )
 
+
     elif args.mode == "robot-ik":
         x = p.readUserDebugParameter(controls["target_x"])
         y = p.readUserDebugParameter(controls["target_y"])
@@ -289,6 +294,7 @@ while True:
             alphas = kinematics.computeIKOriented(x, y, z, leg_id, params)
             set_leg_angles(alphas, leg_id, targets, params)
         state = sim.setJoints(targets)
+
 
     elif args.mode == "rotation":
         x = p.readUserDebugParameter(controls["target_x"])
@@ -308,6 +314,7 @@ while True:
             
         state = sim.setJoints(targets)
             
+
     elif args.mode == "walk":
         x = p.readUserDebugParameter(controls["x"])
         z = p.readUserDebugParameter(controls["height_hexapode"])
@@ -325,6 +332,7 @@ while True:
                 set_leg_angles(alphas, leg_id, targets, params)
 
             state = sim.setJoints(targets)
+
 
     elif args.mode == "ultrawalk":
         x = p.readUserDebugParameter(controls["x"])
@@ -364,6 +372,7 @@ while True:
 
         state = sim.setJoints(targets)
 
+
     elif args.mode == "ultrawalkcircle":
         x = 0
         z = p.readUserDebugParameter(controls["target_z"])
@@ -402,6 +411,7 @@ while True:
 
         state = sim.setJoints(targets)    
 
+
     elif args.mode == "rotationcircle" :
         x = 0
         z = p.readUserDebugParameter(controls["target_z"])
@@ -434,49 +444,8 @@ while True:
                 alphas = kinematics.demicircle(x, z, r, sim.t + 0.5*duration, duration, leg_id, params, extra_theta)
                 set_leg_angles(alphas, leg_id, targets, params)
             state = sim.setJoints(targets)
-
-    elif args.mode == "topkek":
-        x = p.readUserDebugParameter(controls["x"])
-        z = p.readUserDebugParameter(controls["height_hexapode"])
-        h = p.readUserDebugParameter(controls["height_arms"])
-        w = p.readUserDebugParameter(controls["amplitude"])
-        period = p.readUserDebugParameter(controls["speed"])
-        direction = p.readUserDebugParameter(controls["direction"])
-
-        xr = p.readUserDebugParameter(controls["xr"]) #0.180  
-        zr = -0.15 
-        hr = 0.001 
-        wr = p.readUserDebugParameter(controls["target_w"])
-        periodr = period 
-
-        for leg_id in range (1,7):
-            if (leg_id == 1) or (leg_id == 5) :
-                alphas = kinematics.triangle_w(x, z, h, w, sim.t, period, leg_id, params, direction)
-                set_leg_angles(alphas, leg_id, targets, params)
-                alphas1 = kinematics.triangle_for_rotation(xr, zr, hr, wr, sim.t, periodr)
-
-                A1 = alphas[0] + alphas1[0]
-                A2 = alphas[1] + alphas1[1]
-                A3 = alphas[2] + alphas1[2]
-                ALPHA = [A1, A2, A3]
-                set_leg_angles(ALPHA, leg_id, targets, params)
-
-            elif (leg_id == 2) or (leg_id == 4) :
-                alphas = kinematics.triangle_w(x, z, h, w, sim.t + 0.5 * period, period, leg_id, params, direction)
-                alphas1 = kinematics.triangle_for_rotation(xr, zr, hr, wr, sim.t + 0.5 * periodr, periodr)
-
-                A1 = alphas[0] + alphas1[0]
-                A2 = alphas[1] + alphas1[1]
-                A3 = alphas[2] + alphas1[2] 
-                ALPHA = [A1, A2, A3]
-                set_leg_angles(ALPHA, leg_id, targets, params)
-            
-            elif (leg_id == 3) or (leg_id == 6) :
-                alphas = kinematics.computeIK
-
-        state = sim.setJoints(targets)
-
         
+
     elif args.mode == "inverse-all":
         x = p.readUserDebugParameter(controls["target_x1"])
         y = p.readUserDebugParameter(controls["target_y1"])
@@ -547,10 +516,53 @@ while True:
         # Surelevation robot pose
         sim.setRobotPose([0, 0, 0.5], [0, 0, 0, 1])
 
-    pos, rpy = sim.getRobotPose()
-    #print("position = {}, angle = {}".format(pos, rpy))
 
+    elif args.mode == "topkek":
+        x = p.readUserDebugParameter(controls["x"])
+        z = p.readUserDebugParameter(controls["height_hexapode"])
+        h = p.readUserDebugParameter(controls["height_arms"])
+        w = p.readUserDebugParameter(controls["amplitude"])
+        period = p.readUserDebugParameter(controls["speed"])
+        direction = p.readUserDebugParameter(controls["direction"])
+
+        xr = p.readUserDebugParameter(controls["xr"]) #0.180  
+        zr = -0.15 
+        hr = 0.001 
+        wr = p.readUserDebugParameter(controls["target_w"])
+        periodr = period 
+
+        for leg_id in range (1,7):
+            if (leg_id == 1) or (leg_id == 5) :
+                alphas = kinematics.triangle_w(x, z, h, w, sim.t, period, leg_id, params, direction)
+                set_leg_angles(alphas, leg_id, targets, params)
+                alphas1 = kinematics.triangle_for_rotation(xr, zr, hr, wr, sim.t, periodr)
+
+                A1 = alphas[0] + alphas1[0]
+                A2 = alphas[1] + alphas1[1]
+                A3 = alphas[2] + alphas1[2]
+                ALPHA = [A1, A2, A3]
+                set_leg_angles(ALPHA, leg_id, targets, params)
+
+            elif (leg_id == 2) or (leg_id == 4) :
+                alphas = kinematics.triangle_w(x, z, h, w, sim.t + 0.5 * period, period, leg_id, params, direction)
+                alphas1 = kinematics.triangle_for_rotation(xr, zr, hr, wr, sim.t + 0.5 * periodr, periodr)
+
+                A1 = alphas[0] + alphas1[0]
+                A2 = alphas[1] + alphas1[1]
+                A3 = alphas[2] + alphas1[2] 
+                ALPHA = [A1, A2, A3]
+                set_leg_angles(ALPHA, leg_id, targets, params)
+            
+            elif (leg_id == 3) or (leg_id == 6) :
+                alphas = kinematics.segment(0.4,0,0,0.4,1,1,sim.t, duration=1)
+                alphas = kinematics.computeDK(0,0.7,90)
+               
+                set_leg_angles(alphas, leg_id, targets, params)
+
+        state = sim.setJoints(targets)
     
+
+
     """Work tests here to obtain some infos about the position and speed of the hexapode"""
     """Need to be improve and write properly after tests"""
     
@@ -576,7 +588,7 @@ while True:
     print ("vyaw : {0:.1f}".format(vyaw))
     """
     
-    """
+    
     # To see the speed
     oldposx = posx
     posx = pos[0]
@@ -586,45 +598,46 @@ while True:
     vitesse = (sqrt(((posx - oldposx)/time.time())**2 + ((posy - oldposy)/time.time())**2 ))**2
     #vitessex = ( ( (posx - oldposx) + (posy - oldposy) ) * 10**13 )/ time.time()
     print("speed : {0:.1f}".format(vitesse*10**27))
-    """
+    
         
     
-
     """End of work code test"""
 
 
 
+    """Code used for all modes here"""
 
-    # Set the hexapod in the air
-    airpause = p.readUserDebugParameter(controls["airpause"])
-    if airpause == 1 :
-        rot_quat = to_pybullet_quaternion(rpy[0], rpy[1], rpy[2])
-        sim.setRobotPose([pos[0], pos[1], 0.5], [0,0,rot_quat[2],1]) 
-
-    """
-    position = [1*math.cos(time.time()), 1*math.cos(time.time()), 0]
-    sim.addDebugPosition(position, duration=3)
-    for leg_id in range (1, 7):
-        params.legs[leg_id][0]
-        sim.getJoints()[params.legs[leg_id][0]]
-        kinematics.computeDK()
-    """
-
-    state = sim.setJoints(targets) # contains tab of : [ position, speed, forces & torques ]
+    pos, rpy = sim.getRobotPose()
+    # print("position = {}, angle = {}".format(pos, rpy))
+    # pos : x, y, z
+    # rpy : roll, pitch, yaw
 
     robot_pose = (sim.getRobotPose()) # (tuple(3), tuple(3)) -- (x,y,z), (roll, pitch, yaw)
     yaw = robot_pose[1][2]
 
-    # Recuperation states motors
-    A = p.readUserDebugParameter(controls["debuglines"])
-    tableau = [0,0,0,0,0,0]
+    # Camera fixed on the robot
+    sim.lookAt(robot_pose[0])
+
+
+    # Set the hexapod in the air
+    airpause = p.readUserDebugParameter(controlp["airpause"])
+    if airpause == 1 :
+        rot_quat = to_pybullet_quaternion(rpy[0], rpy[1], rpy[2])
+        sim.setRobotPose([pos[0], pos[1], 0.5], [0,0,rot_quat[2],1]) 
+
+
+    # Tab with : [ position, speed, forces & torques ]
+    state = sim.setJoints(targets)
+
+
+    # Add debug lines, recovering states of motors
+    A = p.readUserDebugParameter(controlp["debuglines"])
     if A == 1 :
         for leg_id in range (1, 7):
             position = kinematics.computeDK(
                 state[params.legs[leg_id][0]][0], 
                 state[params.legs[leg_id][1]][0], 
-                state[params.legs[leg_id][2]][0]
-                )
+                state[params.legs[leg_id][2]][0])
             
             position = kinematics.rotaton_2D(position[0], position[1], position[2], -LEG_ANGLES[leg_id - 1] + yaw)
 
@@ -632,8 +645,7 @@ while True:
                 LEG_CENTER_POS[leg_id - 1][0],
                 LEG_CENTER_POS[leg_id - 1][1],
                 LEG_CENTER_POS[leg_id - 1][2],
-                yaw
-                )
+                yaw)
 
             position[0] += leg_center_position[0] + robot_pose[0][0]
             position[1] += leg_center_position[1] + robot_pose[0][1]
@@ -641,8 +653,5 @@ while True:
 
             sim.addDebugPosition(position, duration=2)       
         
-
-    # Camera fixed on the robot
-    sim.lookAt(robot_pose[0])
 
     sim.tick()

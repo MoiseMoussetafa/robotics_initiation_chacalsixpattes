@@ -216,8 +216,7 @@ def computeIKNotOriented(x, y, z, legID, params, extra_theta=0, verbose=False):
     return computeIK(
         x + params.initLeg[legID - 1][0],
         y + params.initLeg[legID - 1][1],
-        z + params.z
-    )
+        z + params.z)
 
 def computeIKRobotCentered(x, y, z, legID, verbose=False):
     x -= LEG_CENTER_POS[legID][0]
@@ -229,7 +228,6 @@ def computeIKRobotCentered(x, y, z, legID, verbose=False):
     result = computeIK(new_pos[1], new_pos[2], new_pos[3], verbose=verbose, use_rads=True)
 
     return result
-
 
 def rotation_new(x, y, z, duration=1):
     max_angle = math.pi/8
@@ -294,6 +292,7 @@ def trianglePoints(x, z, h, w):
     P2 = [x, w/2, z]
     P3 = [x, -w/2, z]
     return [P1, P2, P3]
+
 
 def trianglePoints2(x, z, h, w):
     """
@@ -396,6 +395,7 @@ def circlePoints(x, z, r, N=16):
     """
     None
 
+
 def circle(x, z, r, t, duration):
     """
     Takes the geometric parameters of the circle and the current time, gives the joint angles to draw the circle with the tip of th leg. Format : [theta1, theta2, theta3]
@@ -404,6 +404,7 @@ def circle(x, z, r, t, duration):
     z_circle =+ r * math.sin(2 * math.pi * (1 / duration) * t)
     alphas = computeIK(x, y_circle, z_circle + z)
     return alphas
+
 
 def segment(segment_x1, segment_y1, segment_z1,
             segment_x2, segment_y2, segment_z2, t, duration):
@@ -468,6 +469,7 @@ def segment_oneway_w(segment_x1, segment_y1, segment_z1, segment_x2, segment_y2,
 
     return (theta1, theta2, theta3)
 
+
 def demicircle(x, z, r, t, duration, legID, params, extra_theta):
     """
     Demi-circle, used for arms, arc in the air, segment on the floor
@@ -487,6 +489,7 @@ def demicircle(x, z, r, t, duration, legID, params, extra_theta):
         alphas = computeIKOriented(x, y_circle, z_circle + z, legID, params, extra_theta , verbose=False)
     return alphas
 
+
 def demicirclenew(x, z, r, t, duration, legID, params, extra_theta):
     """
     Demi-circle
@@ -503,6 +506,7 @@ def demicirclenew(x, z, r, t, duration, legID, params, extra_theta):
         alphas = computeIKOriented(x, y_circle, z_circle + z, legID, params, extra_theta , verbose=False)
     return alphas
 
+
 def demicirclefloornew(x, z, r, t, duration, legID, params, extra_theta):
     """
     Just demi-circle on the ground
@@ -516,6 +520,7 @@ def demicirclefloornew(x, z, r, t, duration, legID, params, extra_theta):
     if t < periode :
         alphas = computeIKOriented(-x_circle - x, y_circle, z, legID, params, extra_theta , verbose=False)
     return alphas
+
 
 def demicirclefloor(x, z, r, t, duration, legID, params):
     """
