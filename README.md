@@ -1,5 +1,5 @@
 # B3 YNOV 2020 - Hexapode ChacalSixPattes
-_An hexapod simulation in Python, by our team ChacalSixPattes, with CANETOS Constantin, INGRAND Loïc, MOUSSETAFA Moïse,	ORTO Dylan_
+_A hexapod simulation in Python, by our team ChacalSixPattes, with CANETOS Constantin, INGRAND Loïc, MOUSSETAFA Moïse,	ORTO Dylan_
 
 ![Screenshot](title.jpg) 
 
