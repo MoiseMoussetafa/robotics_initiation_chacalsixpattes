@@ -88,7 +88,7 @@ robotPath = "phantomx_description/urdf/phantomx.urdf"
 sim = Simulation(robotPath, gui=True, panels=True, useUrdfInertia=False)
 # sim.setFloorFrictions(lateral=0, spinning=0, rolling=0)
 pos, rpy = sim.getRobotPose()
-sim.setRobotPose([0, 0, 0.5], [0, 0, 0, 1])
+sim.setRobotPose([0, 0, 0.5], to_pybullet_quaternion(0,0,0))
 
 raw = 0
 pitch = 0
@@ -525,7 +525,8 @@ while True:
     print ("vyaw : {0:.1f}".format(vyaw))
     """
     
-    ""
+    """
+    # To see the speed
     oldposx = posx
     posx = pos[0]
     oldposy = posy
@@ -534,20 +535,66 @@ while True:
     vitesse = (sqrt(((posx - oldposx)/time.time())**2 + ((posy - oldposy)/time.time())**2 ))**2
     #vitessex = ( ( (posx - oldposx) + (posy - oldposy) ) * 10**13 )/ time.time()
     print("speed : {0:.1f}".format(vitesse*10**27))
+    """
         
     
-    
+
     """End of work code test"""
 
 
-    """Set the hexapod in the air"""
+
+
+    # Set the hexapod in the air
     airpause = p.readUserDebugParameter(controls["airpause"])
     if airpause == 1 :
         rot_quat = to_pybullet_quaternion(rpy[0], rpy[1], rpy[2])
         sim.setRobotPose([pos[0], pos[1], 0.5], [0,0,rot_quat[2],1]) 
 
+    """
+    position = [1*math.cos(time.time()), 1*math.cos(time.time()), 0]
+    sim.addDebugPosition(position, duration=3)
+    for leg_id in range (1, 7):
+        params.legs[leg_id][0]
+        sim.getJoints()[params.legs[leg_id][0]]
+        kinematics.computeDK()
+    """
+
+
+
+
+    """Code guidé cours"""
+
+    state = sim.setJoints(targets) # contains tab of : [ position, speed, forces & torques ]
 
     robot_pose = (sim.getRobotPose()) # (tuple(3), tuple(3)) -- (x,y,z), (roll, pitch, yaw)
     yaw = robot_pose[1][2]
+
+    for leg_id in range (1, 7):
+        position = kinematics.computeDK(
+            state[params.legs[leg_id][0]][0], 
+            state[params.legs[leg_id][1]][0], 
+            state[params.legs[leg_id][2]][0]
+            )
+        
+        position = kinematics.rotaton_2D(position[0], position[1], position[2], -LEG_ANGLES[leg_id - 1] + yaw)
+
+        leg_center_position = kinematics.rotaton_2D(
+            LEG_CENTER_POS[leg_id - 1][0],
+            LEG_CENTER_POS[leg_id - 1][1],
+            LEG_CENTER_POS[leg_id - 1][2],
+            yaw
+            )
+
+        position[0] += leg_center_position[0] + robot_pose[0][0]
+        position[1] += leg_center_position[1] + robot_pose[0][1]
+        position[2] += leg_center_position[2] + robot_pose[0][2]
+
+        sim.addDebugPosition(position, duration=3)
+
+    """ End code cours """
+
+
+    # Camera fixed on the robot
     sim.lookAt(robot_pose[0])
+
     sim.tick()
