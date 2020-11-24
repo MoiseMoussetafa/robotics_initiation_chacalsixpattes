@@ -442,13 +442,27 @@ def demicircle(x, z, r, t, duration, legID, params, extra_theta):
     """
     Demi-circle, used for arms, arc in the air, segment on the floor
     """
-
-    """
-    x_circle = r * math.sin(2 * math.pi * (1 / duration) * t) / 2
-    """
-
     y_circle = r * math.sin(2 * math.pi * (1 / duration) * t)
     z_circle = r * math.cos(2 * math.pi * (1 / duration) * t)
+    p1 = [x, y_circle + r ,z]
+    p2 = [x, y_circle - r, z]
+    d1 = segdist(p1, p2)
+    d2 = math.pi * r
+    periode = (d1/(d1+d2)) * duration
+    #periode = duration/2
+
+    if t < periode :
+        alphas = segment_oneway_w(p1[1], p1[1], p1[2], p2[1], p2[1], p2[2], t, periode, legID, params, extra_theta)
+    else :
+        alphas = computeIKOriented(x, y_circle, z_circle + z, legID, params, extra_theta , verbose=False)
+    return alphas
+
+def demicirclefloor(x, z, r, t, duration, legID, params, extra_theta):
+    """
+    Demi-circle, used for arms, arc in the air, segment on the floor
+    """
+    y_circle = r * math.sin(2 * math.pi * (1 / duration) * t)
+    x_circle = r * math.cos(2 * math.pi * (1 / duration) * t)
     p1 = [x, y_circle + r ,z]
     p2 = [x, y_circle - r, z]
     d1 = segdist(p1, p2)
@@ -458,19 +472,13 @@ def demicircle(x, z, r, t, duration, legID, params, extra_theta):
     if t < periode :
         alphas = segment_oneway_w(p1[1], p1[1], p1[2], p2[1], p2[1], p2[2], t, periode, legID, params, extra_theta)
     else :
-        alphas = computeIKOriented(x, y_circle, z_circle + z, legID, params, extra_theta , verbose=False)
+        alphas = computeIKOriented(x_circle + x, y_circle, z, legID, params, extra_theta , verbose=False)
     return alphas
 
-
-def demicirclefloor(x, z, r, t, duration, legID, params):
+def demicirclefloorold(x, z, r, t, duration, legID, params):
     """
     Demi-circle, used for arms, arc and segment on the floor
     """
-
-    """
-    x_circle = r * math.sin(2 * math.pi * (1 / duration) * t)
-    """
-
     y_circle = r * math.sin(2 * math.pi * (1 / duration) * t)
     z_circle =+ r * math.cos(2 * math.pi * (1 / duration) * t)
     p1 = [x, y_circle + r ,z]
