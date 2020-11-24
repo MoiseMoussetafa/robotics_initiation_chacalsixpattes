@@ -60,7 +60,6 @@ def to_pybullet_quaternion(roll, pitch, yaw, degrees=False):
     # print(rot_quat)
     return rot_quat
 
-
 # Updates the values of the dictionnary targets to set 3 angles to given leg
 def set_leg_angles(alphas, leg_id, targets, params):
     leg = params.legs[leg_id]
@@ -93,7 +92,6 @@ sim.setRobotPose([0, 0, 0.5], [0, 0, 0, 1])
 raw = 0
 pitch = 0
 yaw = 0
-posx = 0
 
 leg_center_pos = [0.1248, -0.06164, 0.001116 + 0.5]
 leg_angle = -math.pi / 4
@@ -102,6 +100,13 @@ params = Parameters ()
 bx = 0.07
 bz = 0.25
 
+controls["airpause"] = p.addUserDebugParameter("airpause", 0, 1, 0)  
+
+controls["reset"] = p.addUserDebugParameter("reset", 0, 1, 0)  
+
+"""
+p.addUserDebugText("topkek", [0,0,0], [15, 15, 15])
+"""
 
 if args.mode == "frozen-direct":
     crosses = []
@@ -522,6 +527,15 @@ while True:
     """
     
     """End of work code test"""
+
+
+
+    """Set the hexapod in the air"""
+    airpause = p.readUserDebugParameter(controls["airpause"])
+    if airpause == 1 :
+        rot_quat = to_pybullet_quaternion(rpy[0], rpy[1], rpy[2])
+        sim.setRobotPose([pos[0], pos[1], 0.5], [0,0,rot_quat[2],1]) 
+
     robot_pose = (sim.getRobotPose()) # (tuple(3), tuple(3)) -- (x,y,z), (roll, pitch, yaw)
     yaw = robot_pose[1][2]
     sim.lookAt(robot_pose[0])
