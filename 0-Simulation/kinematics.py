@@ -218,34 +218,20 @@ def computeIKNotOriented(x, y, z, legID, params, extra_theta=0, verbose=False):
         y + params.initLeg[legID - 1][1],
         z + params.z)
 
+""" A RETRAVAILLER POUR ROTATION CIRCLE PROPRE """
+
 def computeIKRobotCentered(x, y, z, legID, verbose=False):
-    x -= LEG_CENTER_POS[legID][0]
-    y -= LEG_CENTER_POS[legID][1]
-    z -= LEG_CENTER_POS[legID][2]
+    x -= LEG_CENTER_POS[legID - 1][0]
+    y -= LEG_CENTER_POS[legID - 1][1]
+    z -= LEG_CENTER_POS[legID - 1][2]
 
-    new_pos = rotaton_2D(x,y,z, -LEG_ANGLES[legID])
+    new_pos = rotaton_2D(x,y,z, -LEG_ANGLES[legID - 1])
 
-    result = computeIK(new_pos[1], new_pos[2], new_pos[3], verbose=verbose, use_rads=True)
-
-    return result
-
-def rotation_new(x, y, z, duration=1):
-    max_angle = math.pi/8
-
-    result = []
-
-    for legID in range (0, 6):
-        angle = max_angle * math.sin(2 * math.pi * time.time() * 0.5) + LEG_ANGLES[legID]
-
-        r = 0.3
-
-        x = r * math.cos(angle)
-        y = r * math.sin(angle)
-
-        result.append() = computeIKRobotCentered(x,y,z, ledID, verbose=False)
+    result = computeIK(new_pos[0], new_pos[1], new_pos[2], verbose=verbose, use_rads=True)
 
     return result
 
+""" A RETRAVAILLER POUR ROTATION CIRCLE PROPRE END """
 
 def rotaton_2D(x, y, z, theta):
     # Applying a rotation around the Z axis

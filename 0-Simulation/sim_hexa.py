@@ -70,9 +70,18 @@ def set_leg_angles(alphas, leg_id, targets, params):
         i += 1
         targets[name] = alphas[i]
 
+# Calcul de distance entre les pattes
+def calcul_dist(list_of_pos):
+    distances_pattes = [0,0,0,0,0,0]
+    for i in range (0,6):
+        distances_pattes[i] = math.sqrt(math.pow(list_of_pos[i][0] - list_of_pos[(i+2)%6][0], 2) +
+                                     math.pow(list_of_pos[i][1] - list_of_pos[(i+2)%6][1], 2) +
+                                     math.pow(list_of_pos[i][2] - list_of_pos[(i+2)%6][2], 2))
+    return distances_pattes
+
+
 
 # m_friction
-
 # Menu help -h
 parser = argparse.ArgumentParser()
 parser.add_argument("-m", "--mode", type=str, default="direct", help="select a MODE")
@@ -102,6 +111,17 @@ leg_center_pos = [0.1248, -0.06164, 0.001116 + 0.5]
 leg_angle = -math.pi / 4
 params = Parameters ()
 
+old_distances_pattes = [0,0,0,0,0,0]
+distances_pattes = [0,0,0,0,0,0]
+
+new_time = 0 
+old_time = 0
+
+patinage_delta_t = 0.1
+patinage_old_t = 0
+
+seuil_patinage_mm = 0.5
+
 bx = 0.07
 bz = 0.25
 
@@ -109,6 +129,8 @@ bz = 0.25
 controlp = {}
 controlp["airpause"] = p.addUserDebugParameter("OFF < airpause > ON", 0, 1, 0)  
 controlp["debuglines"] = p.addUserDebugParameter("OFF < debuglines > ON", 0, 1, 0)  
+controlp["seuil_patinage_mm"] = p.addUserDebugParameter("seuil_patinage_mm", 0.01, 3, 0.5)          
+
 
 
 if args.mode == "frozen-direct":
@@ -172,8 +194,8 @@ elif args.mode == "ultrawalkcircle":
     controls["extra_theta"] = p.addUserDebugParameter("extra_theta", 0, 9.5, 4.75) 
     controls["target_w"] = p.addUserDebugParameter("target_w", -0.04, 0.04, 0)                     
             
-elif args.mode == "rotationcircle":
-    controls["target_z"] = p.addUserDebugParameter("target_z", -0.1, 0, 0)
+elif args.mode == "rotationcircle" or args.mode == "rotationcircleold":
+    controls["target_z"] = p.addUserDebugParameter("target_z", -2, 0, -0.4)
     controls["target_r"] = p.addUserDebugParameter("target_r", 0.001, 0.1, 0.023)
     controls["target_duration"] = p.addUserDebugParameter("target_duration", 0.01, 1, 1)
 
@@ -218,7 +240,9 @@ elif args.mode == "topkek":
 initRobot(params)
 time.sleep(0.5)
 
+
 while True:
+
     targets = {}
     for name in sim.getJoints():
         if "c1" in name or "thigh" in name or "tibia" in name:
@@ -412,7 +436,7 @@ while True:
         state = sim.setJoints(targets)    
 
 
-    elif args.mode == "rotationcircle" :
+    elif args.mode == "rotationcircleold" :
         x = 0
         z = p.readUserDebugParameter(controls["target_z"])
         r = p.readUserDebugParameter(controls["target_r"])
@@ -428,6 +452,23 @@ while True:
             
             state = sim.setJoints(targets)
 
+    elif args.mode == "rotationcircle" :
+        x = 0
+        z = p.readUserDebugParameter(controls["target_z"])
+        r = p.readUserDebugParameter(controls["target_r"])
+        duration = p.readUserDebugParameter(controls["target_duration"])
+        circle_radius_m = 0.3
+        max_angle = math.pi/9
+
+        for leg_id in range (1,7):
+            angle = max_angle * math.cos(time.time()) + LEG_ANGLES[leg_id - 1]
+            x = circle_radius_m * math.cos(angle)
+            y = circle_radius_m * math.sin(angle)
+            alphas = kinematics.computeIKRobotCentered(x, y, z, leg_id)
+
+            set_leg_angles(alphas, leg_id, targets, params)
+            
+        state = sim.setJoints(targets)
 
     elif args.mode == "walkcircle":
         x = 0
@@ -588,7 +629,7 @@ while True:
     print ("vyaw : {0:.1f}".format(vyaw))
     """
     
-    
+    """
     # To see the speed
     oldposx = posx
     posx = pos[0]
@@ -598,7 +639,7 @@ while True:
     vitesse = (sqrt(((posx - oldposx)/time.time())**2 + ((posy - oldposy)/time.time())**2 ))**2
     #vitessex = ( ( (posx - oldposx) + (posy - oldposy) ) * 10**13 )/ time.time()
     print("speed : {0:.1f}".format(vitesse*10**27))
-    
+    """
         
     
     """End of work code test"""
@@ -630,9 +671,11 @@ while True:
     state = sim.setJoints(targets)
 
 
+    """ DEBUG """
     # Add debug lines, recovering states of motors
     A = p.readUserDebugParameter(controlp["debuglines"])
     if A == 1 :
+        list_of_pos = []
         for leg_id in range (1, 7):
             position = kinematics.computeDK(
                 state[params.legs[leg_id][0]][0], 
@@ -650,8 +693,30 @@ while True:
             position[0] += leg_center_position[0] + robot_pose[0][0]
             position[1] += leg_center_position[1] + robot_pose[0][1]
             position[2] += leg_center_position[2] + robot_pose[0][2]
+            list_of_pos.append(position)
 
-            sim.addDebugPosition(position, duration=2)       
+            sim.addDebugPosition(position, duration=2)            
+
+
+        # Calcul fréquence
+        old_time = new_time
+        new_time = time.time()
+        dt = new_time - old_time
+        freq =  1 / (new_time - old_time)
+        seuil_patinage_mm = p.readUserDebugParameter(controlp["seuil_patinage_mm"])
+
+        if ((time.time() - patinage_old_t) >= patinage_delta_t) :
+            # Calcul des distances
+            old_distances_pattes = distances_pattes
+            distances_pattes = calcul_dist(list_of_pos)
+
+            for i in range (0,6):
+                diff_dist = abs((old_distances_pattes[i] - distances_pattes[i])*1000)
+                if diff_dist >= seuil_patinage_mm :
+                    print("Diff de distance entre {} et {} : {}".format(i+1, ((i+2)%6)+1, diff_dist) )
+            print("period = {} s et freq = {} Hz".format(dt, freq))
+            
+            patinage_old_t = time.time()
         
 
     sim.tick()
