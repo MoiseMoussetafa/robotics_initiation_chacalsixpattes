@@ -218,8 +218,8 @@ def computeIKNotOriented(x, y, z, legID, params, extra_theta=0, verbose=False):
         y + params.initLeg[legID - 1][1],
         z + params.z)
 
-""" A RETRAVAILLER POUR ROTATION CIRCLE PROPRE """
-
+# Computes the inverse kinematics of the robot
+# The movements are centered in relation to the middle of the frame
 def computeIKRobotCentered(x, y, z, legID, verbose=False):
     x -= LEG_CENTER_POS[legID - 1][0]
     y -= LEG_CENTER_POS[legID - 1][1]
@@ -231,10 +231,8 @@ def computeIKRobotCentered(x, y, z, legID, verbose=False):
 
     return result
 
-""" A RETRAVAILLER POUR ROTATION CIRCLE PROPRE END """
-
+# Applying a rotation around the Z axis
 def rotaton_2D(x, y, z, theta):
-    # Applying a rotation around the Z axis
     new_x = math.cos(theta) * x - math.sin(theta) * y
     new_y = math.sin(theta) * x + math.cos(theta) * y
     return [new_x, new_y, z]
@@ -467,7 +465,6 @@ def demicircle(x, z, r, t, duration, legID, params, extra_theta):
     d1 = segdist(p1, p2)
     d2 = math.pi * r
     periode = (d1/(d1+d2)) * duration
-    #periode = duration/2
 
     if t < periode :
         alphas = segment_oneway_w(p1[1], p1[1], p1[2], p2[1], p2[1], p2[2], t, periode, legID, params, extra_theta)

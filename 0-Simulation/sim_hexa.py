@@ -70,7 +70,8 @@ def set_leg_angles(alphas, leg_id, targets, params):
         i += 1
         targets[name] = alphas[i]
 
-# Calcul de distance entre les pattes
+
+# Calculation of distance between legs
 def calcul_dist(list_of_pos):
     distances_pattes = [0,0,0,0,0,0]
     for i in range (0,6):
@@ -99,7 +100,10 @@ sim = Simulation(robotPath, gui=True, panels=True, useUrdfInertia=False)
 # sim.setFloorFrictions(lateral=0, spinning=0, rolling=0)
 pos, rpy = sim.getRobotPose()
 sim.setRobotPose([0, 0, 0.5], to_pybullet_quaternion(0,0,0))
+params = Parameters ()
 
+
+""" Some custom and personnal variables """
 raw = 0
 pitch = 0
 yaw = 0
@@ -109,7 +113,6 @@ posy = 0
 
 leg_center_pos = [0.1248, -0.06164, 0.001116 + 0.5]
 leg_angle = -math.pi / 4
-params = Parameters ()
 
 old_distances_pattes = [0,0,0,0,0,0]
 distances_pattes = [0,0,0,0,0,0]
@@ -125,12 +128,17 @@ seuil_patinage_mm = 0.5
 bx = 0.07
 bz = 0.25
 
+
+
+###################################################################################################
+###################################################################################################
+""" Controls, depending on the mode """
+
 # Dictionary of personal controls 
 controlp = {}
 controlp["airpause"] = p.addUserDebugParameter("OFF < airpause > ON", 0, 1, 0)  
 controlp["debuglines"] = p.addUserDebugParameter("OFF < debuglines > ON", 0, 1, 0)  
 controlp["seuil_patinage_mm"] = p.addUserDebugParameter("seuil_patinage_mm", 0.01, 3, 0.5)          
-
 
 
 if args.mode == "frozen-direct":
@@ -194,7 +202,7 @@ elif args.mode == "ultrawalkcircle":
     controls["extra_theta"] = p.addUserDebugParameter("extra_theta", 0, 9.5, 4.75) 
     controls["target_w"] = p.addUserDebugParameter("target_w", -0.04, 0.04, 0)                     
             
-elif args.mode == "rotationcircle" or args.mode == "rotationcircleold":
+elif args.mode == "rotationcircle" or args.mode == "rotationcirclenew":
     controls["target_z"] = p.addUserDebugParameter("target_z", -2, 0, -0.4)
     controls["target_r"] = p.addUserDebugParameter("target_r", 0.001, 0.1, 0.023)
     controls["target_duration"] = p.addUserDebugParameter("target_duration", 0.01, 1, 1)
@@ -237,9 +245,16 @@ elif args.mode == "topkek":
     controls["xr"] = p.addUserDebugParameter("xr", 0.15, 0.2, 0.18) 
 
 
+
+###################################################################################################
+###################################################################################################
+""" Init the robot """
 initRobot(params)
 time.sleep(0.5)
 
+###################################################################################################
+###################################################################################################
+""" All modes coded here """
 
 while True:
 
@@ -436,7 +451,7 @@ while True:
         state = sim.setJoints(targets)    
 
 
-    elif args.mode == "rotationcircleold" :
+    elif args.mode == "rotationcircle" :
         x = 0
         z = p.readUserDebugParameter(controls["target_z"])
         r = p.readUserDebugParameter(controls["target_r"])
@@ -452,7 +467,9 @@ while True:
             
             state = sim.setJoints(targets)
 
-    elif args.mode == "rotationcircle" :
+    
+    # rotationcirclenew : Need to be coded correctly - Actually : rotation on itself
+    elif args.mode == "rotationcirclenew" :
         x = 0
         z = p.readUserDebugParameter(controls["target_z"])
         r = p.readUserDebugParameter(controls["target_r"])
@@ -470,6 +487,8 @@ while True:
             
         state = sim.setJoints(targets)
 
+
+    # walkcircle : not perfect
     elif args.mode == "walkcircle":
         x = 0
         z = p.readUserDebugParameter(controls["target_z"])
@@ -595,19 +614,21 @@ while True:
                 set_leg_angles(ALPHA, leg_id, targets, params)
             
             elif (leg_id == 3) or (leg_id == 6) :
-                alphas = kinematics.segment(0.4,0,0,0.4,1,1,sim.t, duration=1)
-                alphas = kinematics.computeDK(0,0.7,90)
+                alphas = kinematics.segment(0.4,0,0,0.4,0,1,sim.t, duration=1)
                
                 set_leg_angles(alphas, leg_id, targets, params)
 
         state = sim.setJoints(targets)
     
 
+###################################################################################################
+###################################################################################################
+    """ Fonctions in all modes """
+
 
     """Work tests here to obtain some infos about the position and speed of the hexapode"""
     """Need to be improve and write properly after tests"""
     
-
     """
     oldraw = raw
     raw = rpy[0]
@@ -646,32 +667,27 @@ while True:
 
 
 
-    """Code used for all modes here"""
-
+    """ DEBUG """
+    
     pos, rpy = sim.getRobotPose()
     # print("position = {}, angle = {}".format(pos, rpy))
     # pos : x, y, z
     # rpy : roll, pitch, yaw
 
+    # Camera fixed on the robot
     robot_pose = (sim.getRobotPose()) # (tuple(3), tuple(3)) -- (x,y,z), (roll, pitch, yaw)
     yaw = robot_pose[1][2]
-
-    # Camera fixed on the robot
     sim.lookAt(robot_pose[0])
 
-
-    # Set the hexapod in the air
+    # Option for setting the hexapod in the air
     airpause = p.readUserDebugParameter(controlp["airpause"])
     if airpause == 1 :
         rot_quat = to_pybullet_quaternion(rpy[0], rpy[1], rpy[2])
         sim.setRobotPose([pos[0], pos[1], 0.5], [0,0,rot_quat[2],1]) 
 
-
     # Tab with : [ position, speed, forces & torques ]
     state = sim.setJoints(targets)
 
-
-    """ DEBUG """
     # Add debug lines, recovering states of motors
     A = p.readUserDebugParameter(controlp["debuglines"])
     if A == 1 :
@@ -698,7 +714,7 @@ while True:
             sim.addDebugPosition(position, duration=2)            
 
 
-        # Calcul fréquence
+        # Calcul frequency
         old_time = new_time
         new_time = time.time()
         dt = new_time - old_time
@@ -706,7 +722,7 @@ while True:
         seuil_patinage_mm = p.readUserDebugParameter(controlp["seuil_patinage_mm"])
 
         if ((time.time() - patinage_old_t) >= patinage_delta_t) :
-            # Calcul des distances
+            # Calcul distances
             old_distances_pattes = distances_pattes
             distances_pattes = calcul_dist(list_of_pos)
 
