@@ -2,7 +2,8 @@ import sys
 import math
 
 """This file gathers constant values used for different robots such as the lengths of the leg parts, the angle conventions, initial positions, etc.
-Also, to maintain compatibility with legacy code, the user can chose whether the input and/or outputs of the kinematic functions are in (rads or degs) and (mm or meters).
+Also, to maintain compatibility with legacy code, 
+the user can chose whether the input and/or outputs of the kinematic functions are in (rads or degs) and (mm or meters).
 Values in this file should however always be written in meters and in rads.
 """
 
@@ -47,6 +48,7 @@ if ROBOT_TYPE == PHANTOMX:
         -math.pi / 2,
         -3 * math.pi / 4,
     ]
+
 elif ROBOT_TYPE == BIOLOID:
     constL1 = 0.001 * 51
     constL2 = 0.001 * 63.7
@@ -64,6 +66,7 @@ elif ROBOT_TYPE == BIOLOID:
     USE_MM_OUTPUT = True
     Z_DIRECTION = -1
     LEG_ANGLES = [math.pi / 2, 0, 0, -math.pi / 2, math.pi, math.pi]
+
 elif ROBOT_TYPE == PHANTOMX_SIMULATION:
     constL1 = 0.054
     constL2 = 0.0645
@@ -111,6 +114,7 @@ elif ROBOT_TYPE == ARM_SIMULATION:
     USE_MM_INPUT = False
     USE_MM_OUTPUT = False
     Z_DIRECTION = 1
+
 else:
     print("ERROR: Unknwon ROBOT_TYPE '{}'".format(ROBOT_TYPE))
     sys.exit()

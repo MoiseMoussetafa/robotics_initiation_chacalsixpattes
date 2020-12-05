@@ -26,6 +26,10 @@ joints = sim.getJoints()
 bx = 0.07
 bz = 0.25
 
+###################################################################################################
+###################################################################################################
+""" Definitions control sliders """
+
 if args.mode == "direct":
     target = p.loadURDF("target2/robot.urdf")
     for joint in joints:
@@ -58,6 +62,10 @@ elif args.mode == "segment":
 lastLine = time.time()
 lastInverse = 0
 targets = {"motor" + str(k + 1): 0 for k in range(3)}
+
+###################################################################################################
+###################################################################################################
+""" main sim2 code, with available modes """
 
 while True:
     if sim.t > 1.0:
@@ -92,6 +100,9 @@ while True:
                     "motor2": -alphas[1],
                     "motor3": alphas[2],
                 }
+
+            """ inverse-iterative does not exist
+            
             elif args.mode == "inverse-iterative":
                 if (time.time() - lastInverse) > 0.1:
                     alphas = kinematics.inverseIterative(x, y, z)
@@ -100,6 +111,7 @@ while True:
                         "motor2": -alphas[1],
                         "motor3": alphas[2],
                     }
+            """
 
         elif args.mode == "triangle":
             x = p.readUserDebugParameter(sliders["triangle_x"])

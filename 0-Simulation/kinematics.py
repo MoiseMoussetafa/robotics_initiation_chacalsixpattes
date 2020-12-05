@@ -270,7 +270,8 @@ def modulopi(angle):
 
 def trianglePoints(x, z, h, w):
     """
-    Takes the geometric parameters of the triangle and returns the position of the 3 points of the triagles. Format : [[x1, y1, z1], [x2, y2, z2], [x3, y3, z3]]
+    Takes the geometric parameters of the triangle and returns the position of the 3 points of the triagles. 
+    Format : [[x1, y1, z1], [x2, y2, z2], [x3, y3, z3]]
     """
     P1 = [x, 0, z+h]
     P2 = [x, w/2, z]
@@ -280,7 +281,8 @@ def trianglePoints(x, z, h, w):
 
 def trianglePoints2(x, z, h, w):
     """
-    Takes the geometric parameters of the triangle and returns the position of the 3 points of the triagles. Format : [[x1, y1, z1], [x2, y2, z2], [x3, y3, z3]]
+    Takes the geometric parameters of the triangle and returns the position of the 3 points of the triagles. 
+    Format : [[x1, y1, z1], [x2, y2, z2], [x3, y3, z3]]
     Specific used for walk
     """
     P1 = [0, x, z+h]
@@ -350,7 +352,8 @@ def triangle_for_rotation(x, z, h, w, t, period=5):
 
 def triangle(x, z, h, w, t, period=5):
     """
-    Takes the geometric parameters of the triangle and the current time, gives the joint angles to draw the triangle with the tip of th leg. Format : [theta1, theta2, theta3]
+    Takes the geometric parameters of the triangle and the current time, gives the joint angles to draw the triangle with the tip of th leg. 
+    Format : [theta1, theta2, theta3]
     """
     points = trianglePoints(x,z,h,w)
     d1 = segdist(points[0],points[1])
@@ -375,14 +378,16 @@ def triangle(x, z, h, w, t, period=5):
 
 def circlePoints(x, z, r, N=16):
     """
-    Takes the geometric parameters of the cercle and returns N points approximating the circle. Format : [[x1, y1, z1], [x2, y2, z2], [x3, y3, z3], etc]
+    Takes the geometric parameters of the cercle and returns N points approximating the circle. 
+    Format : [[x1, y1, z1], [x2, y2, z2], [x3, y3, z3], etc]
     """
     None
 
 
 def circle(x, z, r, t, duration):
     """
-    Takes the geometric parameters of the circle and the current time, gives the joint angles to draw the circle with the tip of th leg. Format : [theta1, theta2, theta3]
+    Takes the geometric parameters of the circle and the current time, gives the joint angles to draw the circle with the tip of th leg. 
+    Format : [theta1, theta2, theta3]
     """
     y_circle = r * math.cos(2 * math.pi * (1 / duration) * t)
     z_circle =+ r * math.sin(2 * math.pi * (1 / duration) * t)

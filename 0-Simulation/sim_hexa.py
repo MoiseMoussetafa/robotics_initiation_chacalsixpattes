@@ -577,6 +577,7 @@ while True:
         sim.setRobotPose([0, 0, 0.5], [0, 0, 0, 1])
 
 
+    # Fun and customizable mode 
     elif args.mode == "topkek":
         x = p.readUserDebugParameter(controls["x"])
         z = p.readUserDebugParameter(controls["height_hexapode"])
