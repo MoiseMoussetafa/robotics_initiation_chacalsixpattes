@@ -99,7 +99,15 @@ elif ROBOT_TYPE == PHANTOMX_SIMULATION:
         (-0.1248, -0.06164, 0.001116),
         (0, -0.1034, 0.001116),
     ]
-
+    LEG_ANGLES_2 = [
+        -math.pi / 4,
+        math.pi / 4,
+        math.pi / 2,
+        3 * math.pi / 4,
+        -3 * math.pi / 4,
+        -math.pi / 2,
+    ]
+    
 elif ROBOT_TYPE == ARM_SIMULATION:
     constL1 = 0.085
     constL2 = 0.185

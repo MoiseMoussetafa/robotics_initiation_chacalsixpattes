@@ -202,7 +202,7 @@ elif args.mode == "ultrawalkcircle":
     controls["extra_theta"] = p.addUserDebugParameter("extra_theta", 0, 9.5, 4.75) 
     controls["target_w"] = p.addUserDebugParameter("target_w", -0.04, 0.04, 0)                     
             
-elif args.mode == "rotationcircle" or args.mode == "rotationcirclenew":
+elif args.mode == "rotationcircle":
     controls["target_z"] = p.addUserDebugParameter("target_z", -2, 0, -0.4)
     controls["target_r"] = p.addUserDebugParameter("target_r", 0.001, 0.1, 0.023)
     controls["target_duration"] = p.addUserDebugParameter("target_duration", 0.01, 1, 1)
@@ -244,7 +244,15 @@ elif args.mode == "topkek":
     controls["target_w"] = p.addUserDebugParameter("target_w > rotation", -0.3, 0.3, 0)            
     controls["xr"] = p.addUserDebugParameter("xr", 0.15, 0.2, 0.18) 
 
+elif args.mode == "rotate":
+    controls["target_z"] = p.addUserDebugParameter("target_z", -2, 0, -0.1)
+    controls["target_r"] = p.addUserDebugParameter("target_r", 0.001, 0.1, 0.023)
+    controls["target_duration"] = p.addUserDebugParameter("target_duration", 0.01, 1, 1)
 
+elif args.mode == "rotationcirclenew":
+    controls["target_z"] = p.addUserDebugParameter("target_z", -2, 0, -0.1)
+    controls["target_r"] = p.addUserDebugParameter("target_r", 0.001, 0.1, 0.023)
+    controls["target_duration"] = p.addUserDebugParameter("target_duration", 0.01, 1, 1)
 
 ###################################################################################################
 ###################################################################################################
@@ -467,23 +475,46 @@ while True:
             
             state = sim.setJoints(targets)
 
-    
-    # rotationcirclenew : Need to be coded correctly - Actually : rotation on itself
+    # Not coded properly, very not OK, i need some help wtf
     elif args.mode == "rotationcirclenew" :
         x = 0
         z = p.readUserDebugParameter(controls["target_z"])
         r = p.readUserDebugParameter(controls["target_r"])
         duration = p.readUserDebugParameter(controls["target_duration"])
         circle_radius_m = 0.3
-        max_angle = math.pi/9
+        max_angle = math.pi/8
+
+        # besoin de faire une variable qui va de 0 à duration, puis de couper duration en 2 et faire les mouvements de pattes 3 par 3
+        t = math.fmod(sim.t,duration)
+        t2 = math.fmod(0,duration)
 
         for leg_id in range (1,7):
-            angle = max_angle * math.cos(time.time()) + LEG_ANGLES[leg_id - 1]
-            x = circle_radius_m * math.cos(angle)
-            y = circle_radius_m * math.sin(angle)
-            alphas = kinematics.computeIKRobotCentered(x, y, z, leg_id)
-
-            set_leg_angles(alphas, leg_id, targets, params)
+            if t2 < t :
+                if (leg_id == 1) or (leg_id == 3) or (leg_id == 5) :
+                    angle = max_angle * math.cos(sim.t) + LEG_ANGLES_2[leg_id - 1]
+                    x = circle_radius_m * math.cos(angle)
+                    y = circle_radius_m * math.sin(angle)
+                    alphas = kinematics.computeIKRobotCentered(x, y, z, leg_id)
+                    set_leg_angles(alphas, leg_id, targets, params)
+                elif (leg_id == 2) or (leg_id == 4) or (leg_id == 6) :
+                    angle = max_angle * math.cos(sim.t) + LEG_ANGLES_2[leg_id - 1]
+                    x = circle_radius_m * math.cos(angle)
+                    y = circle_radius_m * math.sin(angle)
+                    alphas = kinematics.computeIKRobotCentered(x, y, z, leg_id)
+                    set_leg_angles(alphas, leg_id, targets, params)
+            else :
+                if (leg_id == 1) or (leg_id == 3) or (leg_id == 5) :
+                    angle = max_angle * math.cos(sim.t) + LEG_ANGLES_2[leg_id - 1]
+                    x = circle_radius_m * math.cos(angle)
+                    y = circle_radius_m * math.sin(angle)
+                    alphas = kinematics.computeIKRobotCentered(x, y, z, leg_id)
+                    set_leg_angles(alphas, leg_id, targets, params)
+                elif (leg_id == 2) or (leg_id == 4) or (leg_id == 6) :
+                    angle = max_angle * math.cos(sim.t) + LEG_ANGLES_2[leg_id - 1]
+                    x = circle_radius_m * math.cos(angle)
+                    y = circle_radius_m * math.sin(angle)
+                    alphas = kinematics.computeIKRobotCentered(x, y, z, leg_id)
+                    set_leg_angles(alphas, leg_id, targets, params)
             
         state = sim.setJoints(targets)
 

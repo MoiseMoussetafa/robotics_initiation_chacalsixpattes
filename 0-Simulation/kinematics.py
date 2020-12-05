@@ -225,7 +225,7 @@ def computeIKRobotCentered(x, y, z, legID, verbose=False):
     y -= LEG_CENTER_POS[legID - 1][1]
     z -= LEG_CENTER_POS[legID - 1][2]
 
-    new_pos = rotaton_2D(x,y,z, -LEG_ANGLES[legID - 1])
+    new_pos = rotaton_2D(x,y,z, -LEG_ANGLES_2[legID - 1])
 
     result = computeIK(new_pos[0], new_pos[1], new_pos[2], verbose=verbose, use_rads=True)
 
@@ -298,7 +298,7 @@ def segdist(P1, P2):
     seg = math.sqrt(math.pow(P2[0]-P1[0],2) + math.pow(P2[1]-P1[1],2) + math.pow(P2[2]-P1[2],2))
     return seg
 
-
+    
 def triangle_w(x, z, h, w, t, period, leg_id, params, extra_theta):
     """
     Function triangle specially used for walk
@@ -323,7 +323,7 @@ def triangle_w(x, z, h, w, t, period, leg_id, params, extra_theta):
         alphas = segment_oneway_w(points[2][0], points[2][1], points[2][2], points[0][0], points[0][1], points[0][2], t - period1 - period2, period3, leg_id, params, extra_theta)
     
     return alphas
-
+        
 
 def triangle_for_rotation(x, z, h, w, t, period=5):
     """
