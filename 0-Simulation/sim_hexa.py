@@ -607,6 +607,22 @@ while True:
         # Surelevation robot pose
         sim.setRobotPose([0, 0, 0.5], [0, 0, 0, 1])
 
+    elif args.mode == "rotate" :
+        x = 0
+        z = p.readUserDebugParameter(controls["target_z"])
+        r = p.readUserDebugParameter(controls["target_r"])
+        duration = p.readUserDebugParameter(controls["target_duration"])
+        circle_radius_m = 0.3
+        max_angle = math.pi/8
+
+        for leg_id in range (1,7):
+            angle = max_angle * math.cos(sim.t*10) + LEG_ANGLES_2[leg_id - 1]
+            x = circle_radius_m * math.cos(angle)
+            y = circle_radius_m * math.sin(angle)
+            alphas = kinematics.computeIKRobotCentered(x, y, z, leg_id)
+            set_leg_angles(alphas, leg_id, targets, params)
+
+        state = sim.setJoints(targets)
 
     # Fun and customizable mode 
     elif args.mode == "topkek":
@@ -724,6 +740,10 @@ while True:
     A = p.readUserDebugParameter(controlp["debuglines"])
     if A == 1 :
         list_of_pos = []
+        # AB = p.getBasePositionAndOrientation(p.loadURDF("target2/robot.urdf"))
+        # print(AB)
+        # p.resetBasePositionAndOrientation(p.loadURDF("target2/robot.urdf"), [0,0,0], [0,0,0,0])
+
         for leg_id in range (1, 7):
             position = kinematics.computeDK(
                 state[params.legs[leg_id][0]][0], 
