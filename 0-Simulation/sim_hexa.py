@@ -92,7 +92,9 @@ parser.add_argument("-inverse-all", help="MODE inverse-all", action="store_true"
 parser.add_argument("-inverse", help="MODE inverse", action="store_true")
 parser.add_argument("-rotation", help="MODE rotation", action="store_true")
 parser.add_argument("-robot-ik", help="MODE robot-ik", action="store_true")
+parser.add_argument("-rotate", help="MODE rotate", action="store_true")
 args = parser.parse_args()
+
 
 controls = {}
 robotPath = "phantomx_description/urdf/phantomx.urdf"
@@ -134,12 +136,17 @@ bz = 0.25
 ###################################################################################################
 """ Controls, depending on the mode """
 
-# Dictionary of personal controls 
+# Dictionary of personal controls, for debug system
 controlp = {}
 controlp["airpause"] = p.addUserDebugParameter("OFF < airpause > ON", 0, 1, 0)  
 controlp["debuglines"] = p.addUserDebugParameter("OFF < debuglines > ON", 0, 1, 0)  
 controlp["seuil_patinage_mm"] = p.addUserDebugParameter("seuil_patinage_mm", 0.01, 3, 0.5)          
 
+# Try here to generate a button for reset
+# controlp["reset"] = p.addUserDebugParameter("reset", math.pi/2)  
+
+
+# For next if and elif, last values of controls : min, max, default value
 
 if args.mode == "frozen-direct":
     crosses = []
@@ -156,7 +163,6 @@ elif args.mode == "direct":
         if "c1" in name or "thigh" in name or "tibia" in name:
             controls[name] = p.addUserDebugParameter(name, -math.pi, math.pi, 0)
 
-# For next elif, last values : min, max, base value
 
 elif args.mode == "inverse":
     cross = p.loadURDF("target2/robot.urdf")
@@ -203,8 +209,8 @@ elif args.mode == "ultrawalkcircle":
     controls["target_w"] = p.addUserDebugParameter("target_w", -0.04, 0.04, 0)                     
             
 elif args.mode == "rotationcircle":
-    controls["target_z"] = p.addUserDebugParameter("target_z", -2, 0, -0.4)
-    controls["target_r"] = p.addUserDebugParameter("target_r", 0.001, 0.1, 0.023)
+    controls["target_z"] = p.addUserDebugParameter("target_z", -2, 0, -0.1)
+    controls["target_r"] = p.addUserDebugParameter("target_r", 0.001, 0.1, 0.040)
     controls["target_duration"] = p.addUserDebugParameter("target_duration", 0.01, 1, 1)
 
 elif args.mode == "walkcircle":
@@ -234,6 +240,17 @@ elif args.mode == "inverse-all":
     controls["target_y6"] = p.addUserDebugParameter("target_y6", -0.4, 0.4, alphas[1])
     controls["target_z6"] = p.addUserDebugParameter("target_z6", -0.4, 0.4, alphas[2])
 
+elif args.mode == "rotate":
+    controls["target_z"] = p.addUserDebugParameter("target_z", -2, 0, -0.1)
+    controls["target_r"] = p.addUserDebugParameter("target_r", 0.001, 0.1, 0.023)
+    controls["target_duration"] = p.addUserDebugParameter("target_duration", 0.01, 10, 1)
+    controls["max_angles"] = p.addUserDebugParameter("max_angles", 8, 50, 15)
+
+elif args.mode == "rotationcirclenew":
+    controls["target_z"] = p.addUserDebugParameter("target_z", -2, 0, -0.1)
+    controls["target_r"] = p.addUserDebugParameter("target_r", 0.001, 0.1, 0.023)
+    controls["target_duration"] = p.addUserDebugParameter("target_duration", 0.01, 1, 1)
+
 elif args.mode == "topkek":
     controls["x"] = p.addUserDebugParameter("x", -0.1, 0.1, 0)                                      
     controls["height_hexapode"] = p.addUserDebugParameter("z > height_hexapode", -0.1, 0.1, -0.02)      
@@ -244,15 +261,6 @@ elif args.mode == "topkek":
     controls["target_w"] = p.addUserDebugParameter("target_w > rotation", -0.3, 0.3, 0)            
     controls["xr"] = p.addUserDebugParameter("xr", 0.15, 0.2, 0.18) 
 
-elif args.mode == "rotate":
-    controls["target_z"] = p.addUserDebugParameter("target_z", -2, 0, -0.1)
-    controls["target_r"] = p.addUserDebugParameter("target_r", 0.001, 0.1, 0.023)
-    controls["target_duration"] = p.addUserDebugParameter("target_duration", 0.01, 1, 1)
-
-elif args.mode == "rotationcirclenew":
-    controls["target_z"] = p.addUserDebugParameter("target_z", -2, 0, -0.1)
-    controls["target_r"] = p.addUserDebugParameter("target_r", 0.001, 0.1, 0.023)
-    controls["target_duration"] = p.addUserDebugParameter("target_duration", 0.01, 1, 1)
 
 ###################################################################################################
 ###################################################################################################
@@ -610,13 +618,12 @@ while True:
     elif args.mode == "rotate" :
         x = 0
         z = p.readUserDebugParameter(controls["target_z"])
-        r = p.readUserDebugParameter(controls["target_r"])
         duration = p.readUserDebugParameter(controls["target_duration"])
+        max_angles = math.pi/p.readUserDebugParameter(controls["max_angles"])
         circle_radius_m = 0.3
-        max_angle = math.pi/8
 
         for leg_id in range (1,7):
-            angle = max_angle * math.cos(sim.t*10) + LEG_ANGLES_2[leg_id - 1]
+            angle = max_angles * math.cos(sim.t*duration) + LEG_ANGLES_2[leg_id - 1]
             x = circle_radius_m * math.cos(angle)
             y = circle_radius_m * math.sin(angle)
             alphas = kinematics.computeIKRobotCentered(x, y, z, leg_id)
@@ -709,10 +716,16 @@ while True:
     #vitessex = ( ( (posx - oldposx) + (posy - oldposy) ) * 10**13 )/ time.time()
     print("speed : {0:.1f}".format(vitesse*10**27))
     """
-        
-    
-    """End of work code test"""
 
+    """
+    reset = p.readUserDebugParameter(controlp["reset"])
+    if reset == 1 :
+        initRobot(params)
+        time.sleep(1)
+    """
+
+
+    """End of work code test"""
 
 
     """ DEBUG """
@@ -733,7 +746,7 @@ while True:
         rot_quat = to_pybullet_quaternion(rpy[0], rpy[1], rpy[2])
         sim.setRobotPose([pos[0], pos[1], 0.5], [0,0,rot_quat[2],1]) 
 
-    # Tab with : [ position, speed, forces & torques ]
+     # Tab with : [ position, speed, forces & torques ]
     state = sim.setJoints(targets)
 
     # Add debug lines, recovering states of motors
@@ -742,6 +755,8 @@ while True:
         list_of_pos = []
         # AB = p.getBasePositionAndOrientation(p.loadURDF("target2/robot.urdf"))
         # print(AB)
+
+        # Mode slowmotion
         # p.resetBasePositionAndOrientation(p.loadURDF("target2/robot.urdf"), [0,0,0], [0,0,0,0])
 
         for leg_id in range (1, 7):
@@ -771,6 +786,7 @@ while True:
         new_time = time.time()
         dt = new_time - old_time
         freq =  1 / (new_time - old_time)
+
         seuil_patinage_mm = p.readUserDebugParameter(controlp["seuil_patinage_mm"])
 
         if ((time.time() - patinage_old_t) >= patinage_delta_t) :
@@ -781,8 +797,8 @@ while True:
             for i in range (0,6):
                 diff_dist = abs((old_distances_pattes[i] - distances_pattes[i])*1000)
                 if diff_dist >= seuil_patinage_mm :
-                    print("Diff de distance entre {} et {} : {}".format(i+1, ((i+2)%6)+1, diff_dist) )
-            print("period = {} s et freq = {} Hz".format(dt, freq))
+                    print("SKATING :\n Distance gap between {0} and {1} : {2:.1f} mm".format(i+1, ((i+2)%6)+1, diff_dist) )
+            print("period = {0} s et freq = {1:.1f} Hz".format(dt, freq))
             
             patinage_old_t = time.time()
         
