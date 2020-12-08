@@ -18,6 +18,13 @@ After the choice of the mode, save the file and you can go use the sim file you 
 
 _By default, the ARM_SIMULATION is selected, for hexapod simulation_
 
+
+## kinematics 
+Except if you know what you do, there is nothing to change in this file.
+
+It contains the mathematical and geometrical functions for simulations.
+
+
 ## sim2
 This file is specially used for basic simulations on a single arm and is not useful for hexapod simulation use.
 ```bash
