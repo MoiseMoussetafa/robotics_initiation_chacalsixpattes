@@ -85,7 +85,9 @@ def calcul_dist(list_of_pos):
 
 
 # Menu help : python3 sim_hexa.py -h
-parser = argparse.ArgumentParser(description="== List of available functions of hexapod, based on triangle movement in priority ==")
+parser = argparse.ArgumentParser(description="==== List of available functions of hexapod, based on triangle movement in priority ====", 
+    epilog="Team ChacalSixPattes")
+parser.add_argument('MODE', nargs='+', help='choose a MODE, format : [python3 sim_hexa.py -m MODE]')
 parser.add_argument("-m", "--mode", type=str, default="direct", help="select a MODE")
 parser.add_argument("-ultrawalk", help="MODE ultrawalk : holonomic walk", action="store_true")
 parser.add_argument("-walk", help="MODE walk : Walking in a straight line (arbitrary direction)", action="store_true")
