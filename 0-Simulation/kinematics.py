@@ -218,6 +218,7 @@ def computeIKNotOriented(x, y, z, legID, params, extra_theta=0, verbose=False):
         y + params.initLeg[legID - 1][1],
         z + params.z)
 
+
 # Computes the inverse kinematics of the robot
 # The movements are centered in relation to the middle of the frame
 def computeIKRobotCentered(x, y, z, legID, verbose=False):
@@ -230,6 +231,7 @@ def computeIKRobotCentered(x, y, z, legID, verbose=False):
     result = computeIK(new_pos[0], new_pos[1], new_pos[2], verbose=verbose, use_rads=True)
 
     return result
+
 
 # Applying a rotation around the Z axis
 def rotaton_2D(x, y, z, theta):

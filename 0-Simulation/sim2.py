@@ -34,7 +34,7 @@ if args.mode == "direct":
     target = p.loadURDF("target2/robot.urdf")
     for joint in joints:
         sliders[joint] = p.addUserDebugParameter(joint, -math.pi, math.pi, 0.0)
-elif args.mode == "inverse" or args.mode == "inverse-iterative":
+elif args.mode == "inverse":
     target = p.loadURDF("target2/robot.urdf")
     sliders["target_x"] = p.addUserDebugParameter("target_x", -1, 1, 0.4)
     sliders["target_y"] = p.addUserDebugParameter("target_y", -1, 1, 0)
@@ -82,36 +82,23 @@ while True:
 
             p.resetBasePositionAndOrientation(target, T, [0, 0, 0, 1])
 
-        elif args.mode == "inverse" or args.mode == "inverse-iterative":
+        elif args.mode == "inverse":
             x = p.readUserDebugParameter(sliders["target_x"])
             y = p.readUserDebugParameter(sliders["target_y"])
             z = p.readUserDebugParameter(sliders["target_z"])
             p.resetBasePositionAndOrientation(target, [x + bx, y, z + bz], [0, 0, 0, 1])
 
-            if args.mode == "inverse":
-                alphas = kinematics.computeIK(x, y, z)
-                print(
-                    "Asked IK for x:{}, y:{}, z{}, got theta1:{}, theta2:{}, theta3:{}".format(
-                        x, y, z, alphas[0], alphas[1], alphas[2]
-                    )
+            alphas = kinematics.computeIK(x, y, z)
+            print(
+                "Asked IK for x:{}, y:{}, z{}, got theta1:{}, theta2:{}, theta3:{}".format(
+                    x, y, z, alphas[0], alphas[1], alphas[2]
                 )
-                targets = {
-                    "motor1": -alphas[0],
-                    "motor2": -alphas[1],
-                    "motor3": alphas[2],
-                }
-
-            """ inverse-iterative does not exist
-            
-            elif args.mode == "inverse-iterative":
-                if (time.time() - lastInverse) > 0.1:
-                    alphas = kinematics.inverseIterative(x, y, z)
-                    targets = {
-                        "motor1": -alphas[0],
-                        "motor2": -alphas[1],
-                        "motor3": alphas[2],
-                    }
-            """
+            )
+            targets = {
+                "motor1": -alphas[0],
+                "motor2": -alphas[1],
+                "motor3": alphas[2],
+            }
 
         elif args.mode == "triangle":
             x = p.readUserDebugParameter(sliders["triangle_x"])

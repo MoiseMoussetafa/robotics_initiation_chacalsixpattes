@@ -13,6 +13,8 @@ from math import *
 # from squaternion import Quaternion
 from scipy.spatial.transform import Rotation
 
+
+# Parameters for legs
 class Parameters:
     def __init__(
         self, z=-0.1,
@@ -76,36 +78,36 @@ def calcul_dist(list_of_pos):
     distances_pattes = [0,0,0,0,0,0]
     for i in range (0,6):
         distances_pattes[i] = math.sqrt(math.pow(list_of_pos[i][0] - list_of_pos[(i+2)%6][0], 2) +
-                                     math.pow(list_of_pos[i][1] - list_of_pos[(i+2)%6][1], 2) +
-                                     math.pow(list_of_pos[i][2] - list_of_pos[(i+2)%6][2], 2))
+                                        math.pow(list_of_pos[i][1] - list_of_pos[(i+2)%6][1], 2) +
+                                        math.pow(list_of_pos[i][2] - list_of_pos[(i+2)%6][2], 2))
     return distances_pattes
 
 
 
-# m_friction
-# Menu help -h
-parser = argparse.ArgumentParser()
+# Menu help : python3 sim_hexa.py -h
+parser = argparse.ArgumentParser(description="== List of available functions of hexapod, based on triangle movement in priority ==")
 parser.add_argument("-m", "--mode", type=str, default="direct", help="select a MODE")
-parser.add_argument("-ultrawalk", help="MODE ultrawalk", action="store_true")
-parser.add_argument("-walk", help="MODE walk", action="store_true")
-parser.add_argument("-inverse-all", help="MODE inverse-all", action="store_true")
-parser.add_argument("-inverse", help="MODE inverse", action="store_true")
-parser.add_argument("-rotation", help="MODE rotation", action="store_true")
-parser.add_argument("-robot-ik", help="MODE robot-ik", action="store_true")
-parser.add_argument("-rotate", help="MODE rotate", action="store_true")
+parser.add_argument("-ultrawalk", help="MODE ultrawalk : holonomic walk", action="store_true")
+parser.add_argument("-walk", help="MODE walk : Walking in a straight line (arbitrary direction)", action="store_true")
+parser.add_argument("-inverse-all", help="MODE inverse-all : Moving an arbitrary leg to an arbitrary (x, y, z) position", action="store_true")
+parser.add_argument("-inverse", help="MODE inverse : Moving leg 1 to an arbitrary (x, y, z) position, 3 visible cursors", action="store_true")
+parser.add_argument("-rotation", help="MODE rotation : Rotating without moving the center of the robot ", action="store_true")
+parser.add_argument("-rotate", help="MODE rotate : Rotating without moving the center of the robot (the 6 legs staying on the floor) ", action="store_true")
+parser.add_argument("-robot-ik", help="MODE robot-ik : Moving the center of the robot to an arbitrary (x, y, z) position (the 6 legs staying on the floor)", action="store_true")
 args = parser.parse_args()
 
 
 controls = {}
 robotPath = "phantomx_description/urdf/phantomx.urdf"
 sim = Simulation(robotPath, gui=True, panels=True, useUrdfInertia=False)
-# sim.setFloorFrictions(lateral=0, spinning=0, rolling=0)
 pos, rpy = sim.getRobotPose()
 sim.setRobotPose([0, 0, 0.5], to_pybullet_quaternion(0,0,0))
 params = Parameters ()
 
+# m_friction
+# sim.setFloorFrictions(lateral=0, spinning=0, rolling=0)
 
-""" Some custom and personnal variables """
+""" Some custom variables """
 raw = 0
 pitch = 0
 yaw = 0
@@ -140,10 +142,7 @@ bz = 0.25
 controlp = {}
 controlp["airpause"] = p.addUserDebugParameter("OFF < airpause > ON", 0, 1, 0)  
 controlp["debuglines"] = p.addUserDebugParameter("OFF < debuglines > ON", 0, 1, 0)  
-controlp["seuil_patinage_mm"] = p.addUserDebugParameter("seuil_patinage_mm", 0.01, 3, 0.5)          
-
-# Try here to generate a button for reset
-# controlp["reset"] = p.addUserDebugParameter("reset", math.pi/2)  
+controlp["seuil_patinage_mm"] = p.addUserDebugParameter("seuil_patinage_mm", 0.01, 10, 5)          
 
 
 # For next if and elif, last values of controls : min, max, default value
@@ -390,6 +389,7 @@ while True:
 
 
     elif args.mode == "ultrawalk":
+        # Parameters for triangle in walk
         x = p.readUserDebugParameter(controls["x"])
         z = p.readUserDebugParameter(controls["height_hexapode"])
         h = p.readUserDebugParameter(controls["height_arms"])
@@ -397,6 +397,7 @@ while True:
         period = p.readUserDebugParameter(controls["speed"])
         direction = p.readUserDebugParameter(controls["direction"])
 
+        # Parameters for triangle in rotation
         xr = p.readUserDebugParameter(controls["xr"]) #0.180  
         zr = -0.15 
         hr = 0.001 
@@ -428,6 +429,7 @@ while True:
         state = sim.setJoints(targets)
 
 
+    # Not working properly, some skating
     elif args.mode == "ultrawalkcircle":
         x = 0
         z = p.readUserDebugParameter(controls["target_z"])
@@ -483,6 +485,7 @@ while True:
             
             state = sim.setJoints(targets)
 
+
     # Not coded properly, very not OK, i need some help wtf
     elif args.mode == "rotationcirclenew" :
         x = 0
@@ -527,7 +530,7 @@ while True:
         state = sim.setJoints(targets)
 
 
-    # walkcircle : not perfect
+    # Need some improvements for obtain the walk with more stabilization 
     elif args.mode == "walkcircle":
         x = 0
         z = p.readUserDebugParameter(controls["target_z"])
@@ -717,14 +720,6 @@ while True:
     print("speed : {0:.1f}".format(vitesse*10**27))
     """
 
-    """
-    reset = p.readUserDebugParameter(controlp["reset"])
-    if reset == 1 :
-        initRobot(params)
-        time.sleep(1)
-    """
-
-
     """End of work code test"""
 
 
@@ -746,17 +741,17 @@ while True:
         rot_quat = to_pybullet_quaternion(rpy[0], rpy[1], rpy[2])
         sim.setRobotPose([pos[0], pos[1], 0.5], [0,0,rot_quat[2],1]) 
 
-     # Tab with : [ position, speed, forces & torques ]
+
+    # Tab with : [ position, speed, forces & torques ] 
     state = sim.setJoints(targets)
+    
 
     # Add debug lines, recovering states of motors
     A = p.readUserDebugParameter(controlp["debuglines"])
     if A == 1 :
         list_of_pos = []
-        # AB = p.getBasePositionAndOrientation(p.loadURDF("target2/robot.urdf"))
-        # print(AB)
-
-        # Mode slowmotion
+        
+        """Mode slowmotion??"""
         # p.resetBasePositionAndOrientation(p.loadURDF("target2/robot.urdf"), [0,0,0], [0,0,0,0])
 
         for leg_id in range (1, 7):
@@ -781,6 +776,7 @@ while True:
             sim.addDebugPosition(position, duration=2)            
 
 
+        """ Calcul skating """
         # Calcul frequency
         old_time = new_time
         new_time = time.time()
